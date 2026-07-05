@@ -64,7 +64,7 @@ fun SettingsScreen(
     val statsValue by stats.collectAsState()
     val maxEntriesValue by maxEntries.collectAsState()
     val autoScrollValue by autoScroll.collectAsState()
-    val springSpec = spring(
+    val springSpec = spring<Color>(
         dampingRatio = Spring.DampingRatioMediumBouncy,
         stiffness = Spring.StiffnessMedium
     )

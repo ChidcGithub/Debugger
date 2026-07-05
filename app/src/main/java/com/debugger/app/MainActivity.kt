@@ -16,11 +16,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.debugger.app.ui.screens.ExportScreen
 import com.debugger.app.ui.screens.LogDetailScreen
 import com.debugger.app.ui.screens.LogListScreen
+import com.debugger.app.ui.screens.SettingsScreen
 import com.debugger.app.ui.theme.DebuggerTheme
 import com.debugger.app.viewmodel.LogViewModel
 
 enum class Screen {
-    LogList, LogDetail, Export
+    LogList, LogDetail, Export, Settings
 }
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +52,9 @@ fun DebuggerApp(viewModel: LogViewModel = viewModel()) {
             },
             onNavigateToExport = {
                 currentScreen = Screen.Export
+            },
+            onNavigateToSettings = {
+                currentScreen = Screen.Settings
             }
         )
         Screen.LogDetail -> LogDetailScreen(
@@ -60,6 +64,14 @@ fun DebuggerApp(viewModel: LogViewModel = viewModel()) {
         )
         Screen.Export -> ExportScreen(
             viewModel = viewModel,
+            onBack = { currentScreen = Screen.LogList }
+        )
+        Screen.Settings -> SettingsScreen(
+            stats = viewModel.stats,
+            maxEntries = viewModel.maxEntries,
+            autoScroll = viewModel.autoScroll,
+            onMaxEntriesChange = { viewModel.updateMaxEntries(it) },
+            onAutoScrollToggle = { viewModel.toggleAutoScroll() },
             onBack = { currentScreen = Screen.LogList }
         )
     }

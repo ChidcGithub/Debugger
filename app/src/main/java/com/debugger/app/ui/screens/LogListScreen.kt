@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,14 +51,23 @@ import com.debugger.app.viewmodel.LogViewModel
 fun LogListScreen(
     viewModel: LogViewModel,
     onNavigateToDetail: (Long) -> Unit,
-    onNavigateToExport: () -> Unit
+    onNavigateToExport: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     val logs by viewModel.logs.collectAsState()
     val filter by viewModel.filter.collectAsState()
     val isCapturing by viewModel.isCapturing.collectAsState()
+    val autoScroll by viewModel.autoScroll.collectAsState()
     val error by viewModel.error.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
     var showActions by remember { mutableStateOf(false) }
+
+    LaunchedEffect(logs.size, autoScroll) {
+        if (autoScroll && logs.isNotEmpty()) {
+            listState.animateScrollToItem(0)
+        }
+    }
 
     LaunchedEffect(error) {
         error?.let {
@@ -73,6 +84,14 @@ fun LogListScreen(
                         text = "Debugger",
                         style = MaterialTheme.typography.headlineMedium
                     )
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -155,6 +174,7 @@ fun LogListScreen(
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
+                        state = listState,
                         contentPadding = PaddingValues(
                             top = 4.dp,
                             bottom = 88.dp

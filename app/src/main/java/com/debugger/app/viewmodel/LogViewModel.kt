@@ -43,6 +43,12 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
+    private val _maxEntries = MutableStateFlow(1000)
+    val maxEntries: StateFlow<Int> = _maxEntries.asStateFlow()
+
+    private val _autoScroll = MutableStateFlow(true)
+    val autoScroll: StateFlow<Boolean> = _autoScroll.asStateFlow()
+
     private val allEntries = mutableListOf<LogEntry>()
 
     init {
@@ -66,6 +72,10 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                     isFavorite = obj.optBoolean("is_favorite")
                 )
                 allEntries.add(0, entry)
+                val max = _maxEntries.value
+                if (allEntries.size > max) {
+                    allEntries.removeAt(allEntries.lastIndex)
+                }
                 applyFilter()
             } catch (_: Exception) { }
         }
@@ -151,6 +161,14 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                 RustBridge.exportLogs(path, format, filterJson)
             } catch (_: Exception) { }
         }
+    }
+
+    fun updateMaxEntries(count: Int) {
+        _maxEntries.value = count.coerceIn(100, 100000)
+    }
+
+    fun toggleAutoScroll() {
+        _autoScroll.value = !_autoScroll.value
     }
 
     fun clearAllLogs() {

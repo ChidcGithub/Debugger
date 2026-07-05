@@ -1,9 +1,10 @@
 package com.debugger.app.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogEntry
@@ -41,8 +42,13 @@ fun LogItem(
     modifier: Modifier = Modifier
 ) {
     val levelColor = LogLevelColors.forLevel(entry.level)
+    val containerColor = LogLevelColors.surfaceForLevel(entry.level)
     val backgroundColor by animateColorAsState(
-        targetValue = levelColor.copy(alpha = 0.08f),
+        targetValue = levelColor.copy(alpha = 0.06f),
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
         label = "bg"
     )
 
@@ -54,7 +60,7 @@ fun LogItem(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -67,9 +73,9 @@ fun LogItem(
         ) {
             Box(
                 modifier = Modifier
-                    .width(4.dp)
+                    .width(5.dp)
                     .height(80.dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .clip(MaterialTheme.shapes.small)
                     .background(levelColor)
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -84,8 +90,8 @@ fun LogItem(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(22.dp)
-                            .clip(CircleShape)
+                            .size(24.dp)
+                            .clip(MaterialTheme.shapes.extraSmall)
                             .background(levelColor),
                         contentAlignment = Alignment.Center
                     ) {
@@ -93,13 +99,13 @@ fun LogItem(
                             text = entry.level,
                             color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.labelSmall,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            fontWeight = FontWeight.Bold
                         )
                     }
                     Text(
                         text = entry.tag,
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.onSurface

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
@@ -96,9 +95,9 @@ fun ExportScreen(
             )
 
             formats.forEach { ((value, label), icon) ->
-                Card(
-                    onClick = { selectedFormat = value },
-                    shape = RoundedCornerShape(12.dp),
+                    Card(
+                        onClick = { selectedFormat = value },
+                        shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(
                         containerColor = if (selectedFormat == value)
                             MaterialTheme.colorScheme.primaryContainer
@@ -143,14 +142,14 @@ fun ExportScreen(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text("Export")
             }
 
             if (exportSuccess) {
                 Card(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )

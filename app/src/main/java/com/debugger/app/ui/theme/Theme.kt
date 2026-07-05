@@ -30,6 +30,7 @@ fun DebuggerTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = DebuggerTypography,
+        shapes = DebuggerShapes,
         content = content
     )
 }

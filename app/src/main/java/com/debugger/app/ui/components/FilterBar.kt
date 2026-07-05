@@ -1,20 +1,22 @@
 package com.debugger.app.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -56,9 +58,10 @@ fun FilterBar(
                 Icon(Icons.Default.Search, contentDescription = "Search")
             },
             singleLine = true,
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.large,
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             ),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onKeywordChange(searchText) })
@@ -72,19 +75,45 @@ fun FilterBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             levels.forEach { (code, name) ->
+                val chipColor = LogLevelColors.forLevel(code)
+                val containerColor by animateColorAsState(
+                    targetValue = if (code in selectedLevels) chipColor.copy(alpha = 0.2f)
+                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    ),
+                    label = "chip_$code"
+                )
+                val labelColor by animateColorAsState(
+                    targetValue = if (code in selectedLevels) chipColor
+                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    ),
+                    label = "chip_label_$code"
+                )
+
                 FilterChip(
                     selected = code in selectedLevels,
                     onClick = { onLevelToggle(code) },
                     label = {
                         Text(
                             text = name,
-                            style = MaterialTheme.typography.labelSmall
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = if (code in selectedLevels)
+                                androidx.compose.ui.text.font.FontWeight.Bold
+                            else
+                                androidx.compose.ui.text.font.FontWeight.Medium
                         )
                     },
-                    shape = RoundedCornerShape(16.dp),
-                    colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = LogLevelColors.forLevel(code).copy(alpha = 0.2f),
-                        selectedLabelColor = LogLevelColors.forLevel(code)
+                    shape = MaterialTheme.shapes.small,
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = containerColor,
+                        selectedLabelColor = labelColor,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 )
             }

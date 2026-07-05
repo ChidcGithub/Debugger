@@ -8,14 +8,20 @@ use crate::parser::LogEntry;
 
 static DB: OnceLock<Mutex<Connection>> = OnceLock::new();
 
-fn get_db() -> &'static Mutex<Connection> {
-    DB.get().expect("Database not initialized")
+fn get_db() -> Option<&'static Mutex<Connection>> {
+    DB.get()
 }
 
-pub fn init(path: &str) {
-    let conn = Connection::open(path).expect("Failed to open database");
+pub fn init(path: &str) -> bool {
+    let conn = match Connection::open(path) {
+        Ok(c) => c,
+        Err(e) => {
+            crate::java_callback("onError", &format!("Failed to open database: {}", e));
+            return false;
+        }
+    };
 
-    conn.execute_batch(
+    if let Err(e) = conn.execute_batch(
         "PRAGMA journal_mode=WAL;
          PRAGMA synchronous=OFF;
 
@@ -34,16 +40,25 @@ pub fn init(path: &str) {
          CREATE INDEX IF NOT EXISTS idx_logs_level ON logs(level);
          CREATE INDEX IF NOT EXISTS idx_logs_tag ON logs(tag);
          CREATE INDEX IF NOT EXISTS idx_logs_pid ON logs(pid);",
-    )
-    .expect("Failed to create tables");
+    ) {
+        crate::java_callback("onError", &format!("Failed to create tables: {}", e));
+        return false;
+    }
 
     DB.set(Mutex::new(conn)).ok();
+    true
 }
 
 pub fn insert_entry(entry: &LogEntry) -> i64 {
-    let db = get_db();
-    let conn = db.lock().unwrap();
-    conn.execute(
+    let db = match get_db() {
+        Some(d) => d,
+        None => return 0,
+    };
+    let conn = match db.lock() {
+        Ok(c) => c,
+        Err(_) => return 0,
+    };
+    if let Err(e) = conn.execute(
         "INSERT INTO logs (timestamp, pid, tid, level, tag, message) VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
         rusqlite::params![
             entry.timestamp,
@@ -53,8 +68,10 @@ pub fn insert_entry(entry: &LogEntry) -> i64 {
             entry.tag,
             entry.message,
         ],
-    )
-    .expect("Failed to insert log entry");
+    ) {
+        crate::java_callback("onError", &format!("Failed to insert log entry: {}", e));
+        return 0;
+    }
     conn.last_insert_rowid()
 }
 
@@ -68,8 +85,14 @@ pub fn query_entries(filter: &LogFilter) -> Result<Vec<LogEntry>, rusqlite::Erro
         where_clause
     );
 
-    let db = get_db();
-    let conn = db.lock().unwrap();
+    let db = match get_db() {
+        Some(d) => d,
+        None => return Err(rusqlite::Error::InvalidParameterName("db_uninitialized".into())),
+    };
+    let conn = match db.lock() {
+        Ok(c) => c,
+        Err(_) => return Err(rusqlite::Error::InvalidParameterName("lock_poisoned".into())),
+    };
     let mut stmt = conn.prepare(&sql)?;
 
     let param_refs: Vec<&dyn rusqlite::types::ToSql> = params.iter()
@@ -103,15 +126,27 @@ pub fn get_logs(filter_json: &str) -> String {
 }
 
 pub fn clear_logs() {
-    let db = get_db();
-    let conn = db.lock().unwrap();
+    let db = match get_db() {
+        Some(d) => d,
+        None => return,
+    };
+    let conn = match db.lock() {
+        Ok(c) => c,
+        Err(_) => return,
+    };
     conn.execute("DELETE FROM logs", []).ok();
     conn.execute("VACUUM", []).ok();
 }
 
 pub fn get_stats() -> String {
-    let db = get_db();
-    let conn = db.lock().unwrap();
+    let db = match get_db() {
+        Some(d) => d,
+        None => return serde_json::json!({"total": 0, "levels": {}, "top_tags": []}).to_string(),
+    };
+    let conn = match db.lock() {
+        Ok(c) => c,
+        Err(_) => return serde_json::json!({"total": 0, "levels": {}, "top_tags": []}).to_string(),
+    };
 
     let total: i64 = conn
         .query_row("SELECT COUNT(*) FROM logs", [], |r| r.get(0))

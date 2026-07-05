@@ -55,9 +55,10 @@ pub extern "system" fn Java_com_debugger_app_bridge_RustBridge_nativeInit<'local
     _class: JClass<'local>,
     db_path: JString<'local>,
 ) {
-    let path: String = env.get_string(&db_path)
-        .expect("Invalid db_path string")
-        .into();
+    let path: String = match env.get_string(&db_path) {
+        Ok(s) => s.into(),
+        Err(_) => return,
+    };
     storage::init(&path);
 }
 
@@ -87,7 +88,10 @@ pub extern "system" fn Java_com_debugger_app_bridge_RustBridge_nativeGetLogs<'lo
         .map(|s| s.into())
         .unwrap_or_default();
     let result = storage::get_logs(&filter);
-    let output = env.new_string(&result).unwrap();
+    let output = match env.new_string(&result) {
+        Ok(s) => s,
+        Err(_) => return std::ptr::null_mut(),
+    };
     output.into_raw()
 }
 
@@ -129,6 +133,9 @@ pub extern "system" fn Java_com_debugger_app_bridge_RustBridge_nativeGetStats<'l
     _class: JClass<'local>,
 ) -> jstring {
     let result = storage::get_stats();
-    let output = env.new_string(&result).unwrap();
+    let output = match env.new_string(&result) {
+        Ok(s) => s,
+        Err(_) => return std::ptr::null_mut(),
+    };
     output.into_raw()
 }

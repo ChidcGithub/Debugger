@@ -35,7 +35,9 @@ pub fn start_capture() {
         }
     };
 
-    *CHILD.lock().unwrap() = Some(child);
+    if let Ok(mut guard) = CHILD.lock() {
+        *guard = Some(child);
+    }
     RUNNING.store(true, Ordering::SeqCst);
     crate::java_callback("onCaptureStateChanged", "true");
 

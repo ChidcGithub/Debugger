@@ -6,34 +6,38 @@ mod storage;
 
 use std::sync::OnceLock;
 use jni::JNIEnv;
-use jni::objects::{JClass, JString, JValue};
+use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
 use jni::sys::{jint, jstring, jboolean, JNI_VERSION_1_6, JNI_TRUE, JNI_FALSE};
 
 static VM: OnceLock<jni::JavaVM> = OnceLock::new();
+static RUST_BRIDGE_CLASS: OnceLock<GlobalRef> = OnceLock::new();
 
-fn get_vm() -> &'static jni::JavaVM {
-    VM.get().expect("JavaVM not initialized, JNI_OnLoad was not called")
+fn get_vm() -> Option<&'static jni::JavaVM> {
+    VM.get()
 }
 
 pub fn java_callback(method: &str, arg: &str) {
-    let vm = get_vm();
+    let vm = match get_vm() {
+        Some(v) => v,
+        None => return,
+    };
     let mut env = match vm.attach_current_thread() {
         Ok(e) => e,
         Err(_) => return,
     };
-
-    let class = match env.find_class("com/debugger/app/bridge/RustBridge") {
-        Ok(c) => c,
-        Err(_) => return,
+    let class_ref = match RUST_BRIDGE_CLASS.get() {
+        Some(c) => c,
+        None => return,
     };
-
+    let raw = class_ref.as_raw();
+    let obj = unsafe { JObject::from_raw(raw) };
+    let class: JClass<'_> = obj.into();
     let j_arg = match env.new_string(arg) {
         Ok(s) => s,
         Err(_) => return,
     };
-
     let _ = env.call_static_method(
-        class,
+        &class,
         method,
         "(Ljava/lang/String;)V",
         &[JValue::Object(&j_arg)],
@@ -45,6 +49,13 @@ pub extern "system" fn JNI_OnLoad(
     vm: jni::JavaVM,
     _: *mut std::ffi::c_void,
 ) -> jint {
+    if let Ok(mut env) = vm.attach_current_thread() {
+        if let Ok(cls) = env.find_class("com/debugger/app/bridge/RustBridge") {
+            if let Ok(global_ref) = env.new_global_ref(cls) {
+                RUST_BRIDGE_CLASS.set(global_ref).ok();
+            }
+        }
+    }
     VM.set(vm).ok();
     JNI_VERSION_1_6
 }

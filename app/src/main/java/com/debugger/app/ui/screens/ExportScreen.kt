@@ -94,7 +94,8 @@ fun ExportScreen(
                 "csv" to "CSV" to Icons.Default.TableChart
             )
 
-            formats.forEach { ((value, label), icon) ->
+            formats.forEach { (pair, icon) ->
+                val (value, label) = pair
                     Card(
                         onClick = { selectedFormat = value },
                         shape = MaterialTheme.shapes.medium,

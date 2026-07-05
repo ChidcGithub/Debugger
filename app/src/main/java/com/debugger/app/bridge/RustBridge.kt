@@ -14,9 +14,9 @@ object RustBridge {
 
     fun initialize(context: Context, cb: LogCallback) {
         callback = cb
-        val dbPath = context.getDatabasePath("debugger.db").absolutePath
-        dbPath.parentFile?.mkdirs()
-        nativeInit(dbPath)
+        val dbFile = context.getDatabasePath("debugger.db")
+        dbFile.parentFile?.mkdirs()
+        nativeInit(dbFile.absolutePath)
     }
 
     fun startCapture() {

@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -305,7 +306,7 @@ private fun PreferencesCard(
     autoScroll: Boolean,
     onMaxEntriesChange: (Int) -> Unit,
     onAutoScrollToggle: () -> Unit,
-    trackColor: androidx.compose.ui.graphics.Color
+    trackColor: Color
 ) {
     var textFieldValue by remember(maxEntries) { mutableStateOf(maxEntries.toString()) }
 

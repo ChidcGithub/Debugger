@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.debugger.app.bridge.RustBridge
 import com.debugger.app.bridge.LogCallback
+import com.debugger.app.model.LogDisplayItem
 import com.debugger.app.model.LogEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,6 +50,12 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
     private val _autoScroll = MutableStateFlow(true)
     val autoScroll: StateFlow<Boolean> = _autoScroll.asStateFlow()
 
+    private val _foldSimilar = MutableStateFlow(false)
+    val foldSimilar: StateFlow<Boolean> = _foldSimilar.asStateFlow()
+
+    private val _displayLogs = MutableStateFlow<List<LogDisplayItem>>(emptyList())
+    val displayLogs: StateFlow<List<LogDisplayItem>> = _displayLogs.asStateFlow()
+
     private val allEntries = mutableListOf<LogEntry>()
 
     init {
@@ -77,6 +84,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                     allEntries.removeAt(allEntries.lastIndex)
                 }
                 applyFilter()
+                refreshStats()
             } catch (_: Exception) { }
         }
     }
@@ -129,6 +137,7 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                 val result = RustBridge.getLogs(filterJson)
                 val entries = parseLogEntries(result)
                 _logs.value = entries
+                refreshDisplay()
             } catch (_: Exception) { }
         }
     }
@@ -171,12 +180,50 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
         _autoScroll.value = !_autoScroll.value
     }
 
+    fun toggleFoldSimilar() {
+        _foldSimilar.value = !_foldSimilar.value
+        refreshDisplay()
+    }
+
+    private fun refreshDisplay() {
+        val logs = _logs.value
+        _displayLogs.value = if (_foldSimilar.value) {
+            foldSimilar(logs)
+        } else {
+            logs.map { LogDisplayItem.Entry(it) }
+        }
+    }
+
+    private fun foldSimilar(logs: List<LogEntry>): List<LogDisplayItem> {
+        if (logs.isEmpty()) return emptyList()
+        val result = mutableListOf<LogDisplayItem>()
+        var i = 0
+        while (i < logs.size) {
+            val current = logs[i]
+            var count = 1
+            while (i + count < logs.size &&
+                logs[i + count].tag == current.tag &&
+                logs[i + count].message == current.message
+            ) {
+                count++
+            }
+            if (count > 1) {
+                result.add(LogDisplayItem.FoldedGroup(current, count))
+            } else {
+                result.add(LogDisplayItem.Entry(current))
+            }
+            i += count
+        }
+        return result
+    }
+
     fun clearAllLogs() {
         viewModelScope.launch {
             RustBridge.clearLogs()
-            allEntries.clear()
-            _logs.value = emptyList()
-            refreshStats()
+                allEntries.clear()
+                _logs.value = emptyList()
+                refreshDisplay()
+                refreshStats()
         }
     }
 
@@ -229,5 +276,6 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                 (filter.pid == null || entry.pid == filter.pid) &&
                 (!filter.favoritesOnly || entry.isFavorite)
         }
+        refreshDisplay()
     }
 }

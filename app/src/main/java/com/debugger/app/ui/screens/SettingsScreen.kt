@@ -151,7 +151,7 @@ private fun AppInfoCard() {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "v0.0.1.1",
+                    text = "v0.0.1.2",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

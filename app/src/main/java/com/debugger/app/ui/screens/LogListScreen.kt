@@ -32,6 +32,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,8 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.debugger.app.model.LogDisplayItem
 import com.debugger.app.ui.components.FilterBar
 import com.debugger.app.ui.components.FloatingActions
+import com.debugger.app.ui.components.GroupedLogItem
 import com.debugger.app.ui.components.LogItem
 import com.debugger.app.viewmodel.LogViewModel
 
@@ -55,17 +58,23 @@ fun LogListScreen(
     onNavigateToSettings: () -> Unit
 ) {
     val logs by viewModel.logs.collectAsState()
+    val displayLogs by viewModel.displayLogs.collectAsState()
     val filter by viewModel.filter.collectAsState()
     val isCapturing by viewModel.isCapturing.collectAsState()
     val autoScroll by viewModel.autoScroll.collectAsState()
+    val foldSimilar by viewModel.foldSimilar.collectAsState()
     val error by viewModel.error.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
     var showActions by remember { mutableStateOf(false) }
 
-    LaunchedEffect(logs.size, autoScroll) {
-        if (autoScroll && logs.isNotEmpty()) {
-            listState.animateScrollToItem(0)
+    val isAtTop by remember {
+        derivedStateOf { listState.firstVisibleItemIndex <= 1 }
+    }
+
+    LaunchedEffect(logs.size) {
+        if (autoScroll && isAtTop && logs.isNotEmpty()) {
+            listState.scrollToItem(0)
         }
     }
 
@@ -81,11 +90,17 @@ fun LogListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Debugger",
+                        text = if (logs.isNotEmpty()) "Debugger (${logs.size})" else "Debugger",
                         style = MaterialTheme.typography.headlineMedium
                     )
                 },
                 actions = {
+                    IconButton(onClick = { viewModel.toggleFoldSimilar() }) {
+                        Icon(
+                            if (foldSimilar) Icons.Default.UnfoldLess else Icons.Default.UnfoldMore,
+                            contentDescription = if (foldSimilar) "Unfold" else "Fold"
+                        )
+                    }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(
                             Icons.Default.Settings,
@@ -172,18 +187,31 @@ fun LogListScreen(
                         state = listState,
                         contentPadding = PaddingValues(
                             top = 4.dp,
-                            bottom = 88.dp
+                            bottom = 80.dp
                         )
                     ) {
                         items(
-                            items = logs,
-                            key = { it.id }
-                        ) { entry ->
-                            LogItem(
-                                entry = entry,
-                                onClick = { onNavigateToDetail(entry.id) },
-                                onLongClick = { showActions = !showActions }
-                            )
+                            items = displayLogs,
+                            key = { item ->
+                                when (item) {
+                                    is LogDisplayItem.Entry -> "e_${item.entry.id}"
+                                    is LogDisplayItem.FoldedGroup -> "g_${item.representative.id}_${item.count}"
+                                }
+                            }
+                        ) { item ->
+                            when (item) {
+                                is LogDisplayItem.Entry -> LogItem(
+                                    entry = item.entry,
+                                    onClick = { onNavigateToDetail(item.entry.id) },
+                                    onLongClick = { showActions = !showActions }
+                                )
+                                is LogDisplayItem.FoldedGroup -> GroupedLogItem(
+                                    entry = item.representative,
+                                    count = item.count,
+                                    onClick = { onNavigateToDetail(item.representative.id) },
+                                    onLongClick = { showActions = !showActions }
+                                )
+                            }
                         }
                     }
                 }

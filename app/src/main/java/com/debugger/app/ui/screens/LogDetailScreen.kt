@@ -5,7 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,12 +31,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,10 +45,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogEntry
+import com.debugger.app.ui.components.GradientTopBar
 import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.ui.theme.DebuggerLevelShapes
 import com.debugger.app.ui.theme.LogLevelColors
@@ -66,7 +64,7 @@ fun LogDetailScreen(
     val logs by viewModel.logs.collectAsState()
     val entry = logs.find { it.id == logId }
     val context = LocalContext.current
-    val isDark = isSystemInDarkTheme()
+
     var copied by remember { mutableStateOf(false) }
 
     val copyBackground by animateColorAsState(
@@ -76,18 +74,14 @@ fun LogDetailScreen(
         label = "copy_bg"
     )
 
+    val detailScrollBehavior = rememberTopAppBarScrollBehavior()
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Log Detail") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+            GradientTopBar(
+                title = "Log Detail",
+                scrollBehavior = detailScrollBehavior,
+                onNavigateBack = onBack
             )
         }
     ) { padding ->
@@ -114,7 +108,7 @@ fun LogDetailScreen(
             Card(
                 shape = DebuggerCardShapes.elevated,
                 colors = CardDefaults.cardColors(
-                    containerColor = LogLevelColors.surfaceForLevel(entry.level, isDark)
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -163,7 +157,6 @@ fun LogDetailScreen(
                         .horizontalScroll(rememberScrollState())
                         .padding(16.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -245,7 +238,6 @@ private fun DetailRow(label: String, value: String, entry: LogEntry) {
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
-                fontFamily = FontFamily.Monospace,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }

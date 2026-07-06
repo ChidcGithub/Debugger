@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
@@ -32,8 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.debugger.app.ui.components.GradientTopBar
 import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.ui.theme.LogLevelColors
 import com.debugger.app.viewmodel.LogStats
@@ -74,26 +73,14 @@ fun SettingsScreen(
         label = "switch_track"
     )
 
+    val settingsScrollBehavior = rememberTopAppBarScrollBehavior()
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Settings",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+            GradientTopBar(
+                title = "Settings",
+                scrollBehavior = settingsScrollBehavior,
+                onNavigateBack = onBack
             )
         }
     ) { padding ->
@@ -151,7 +138,7 @@ private fun AppInfoCard() {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "v0.0.1.2",
+                    text = "v0.0.1.3",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -27,8 +29,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogDisplayItem
 import com.debugger.app.ui.components.FilterBar
 import com.debugger.app.ui.components.FloatingActions
+import com.debugger.app.ui.components.GradientTopBar
 import com.debugger.app.ui.components.GroupedLogItem
 import com.debugger.app.ui.components.LogItem
 import com.debugger.app.viewmodel.LogViewModel
@@ -66,6 +69,7 @@ fun LogListScreen(
     val error by viewModel.error.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
+    val scrollBehavior = rememberTopAppBarScrollBehavior(listState)
     var showActions by remember { mutableStateOf(false) }
 
     val isAtTop by remember {
@@ -87,13 +91,10 @@ fun LogListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (logs.isNotEmpty()) "Debugger (${logs.size})" else "Debugger",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                },
+            GradientTopBar(
+                title = if (logs.isNotEmpty()) "Debugger (${logs.size})" else "Debugger",
+                scrollBehavior = scrollBehavior,
+                onNavigateBack = null,
                 actions = {
                     IconButton(onClick = { viewModel.toggleFoldSimilar() }) {
                         Icon(
@@ -107,10 +108,7 @@ fun LogListScreen(
                             contentDescription = "Settings"
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },

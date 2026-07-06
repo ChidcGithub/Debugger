@@ -34,11 +34,11 @@
         app:fontStyle="normal"
         app:fontVariationSettings="wght 900" />
     <font
-        app:font="@font/nunito_variable"
+        app:font="@font/nunito_italic"
         app:fontStyle="italic"
         app:fontVariationSettings="wght 400" />
     <font
-        app:font="@font/nunito_variable"
+        app:font="@font/nunito_italic"
         app:fontStyle="italic"
         app:fontVariationSettings="wght 700" />
 </font-family>

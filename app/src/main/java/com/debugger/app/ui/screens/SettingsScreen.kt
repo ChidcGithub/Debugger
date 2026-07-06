@@ -31,7 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarScrollBehavior
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -73,13 +73,11 @@ fun SettingsScreen(
         label = "switch_track"
     )
 
-    val settingsScrollBehavior = rememberTopAppBarScrollBehavior()
-
     Scaffold(
         topBar = {
             GradientTopBar(
                 title = "Settings",
-                scrollBehavior = settingsScrollBehavior,
+                collapsedFraction = 0f,
                 onNavigateBack = onBack
             )
         }

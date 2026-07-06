@@ -34,7 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarScrollBehavior
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -74,13 +74,11 @@ fun LogDetailScreen(
         label = "copy_bg"
     )
 
-    val detailScrollBehavior = rememberTopAppBarScrollBehavior()
-
     Scaffold(
         topBar = {
             GradientTopBar(
                 title = "Log Detail",
-                scrollBehavior = detailScrollBehavior,
+                collapsedFraction = 0f,
                 onNavigateBack = onBack
             )
         }

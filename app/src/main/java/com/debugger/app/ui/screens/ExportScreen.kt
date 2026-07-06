@@ -30,7 +30,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarScrollBehavior
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,13 +61,11 @@ fun ExportScreen(
     var exportPath by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
-    val exportScrollBehavior = rememberTopAppBarScrollBehavior()
-
     Scaffold(
         topBar = {
             GradientTopBar(
                 title = "Export Logs",
-                scrollBehavior = exportScrollBehavior,
+                collapsedFraction = 0f,
                 onNavigateBack = onBack
             )
         }

@@ -14,14 +14,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledIconButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,17 +30,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradientTopBar(
     title: String,
-    scrollBehavior: TopAppBarScrollBehavior,
+    collapsedFraction: Float = 0f,
     navigationIcon: ImageVector = Icons.Default.ArrowBack,
     onNavigateBack: (() -> Unit)? = null,
     actions: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val collapsedFraction = scrollBehavior.state.collapsedFraction
     val titleAlpha by animateFloatAsState(
         targetValue = 1f - collapsedFraction * 0.3f,
         animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
@@ -92,7 +88,7 @@ fun GradientTopBar(
                 FilledIconButton(
                     onClick = onNavigateBack,
                     shape = CircleShape,
-                    colors = FilledIconButtonDefaults.filledIconButtonColors(
+                    colors = IconButtonDefaults.filledIconButtonColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),

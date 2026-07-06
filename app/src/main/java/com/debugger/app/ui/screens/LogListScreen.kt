@@ -30,7 +30,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,8 +68,14 @@ fun LogListScreen(
     val error by viewModel.error.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
-    val scrollBehavior = rememberTopAppBarScrollBehavior(listState)
     var showActions by remember { mutableStateOf(false) }
+
+    val collapsedFraction by remember {
+        derivedStateOf {
+            if (listState.firstVisibleItemIndex > 0) 1f
+            else (listState.firstVisibleItemScrollOffset.toFloat() / 200f).coerceIn(0f, 1f)
+        }
+    }
 
     val isAtTop by remember {
         derivedStateOf { listState.firstVisibleItemIndex <= 1 }
@@ -93,7 +98,7 @@ fun LogListScreen(
         topBar = {
             GradientTopBar(
                 title = if (logs.isNotEmpty()) "Debugger (${logs.size})" else "Debugger",
-                scrollBehavior = scrollBehavior,
+                collapsedFraction = collapsedFraction,
                 onNavigateBack = null,
                 actions = {
                     IconButton(onClick = { viewModel.toggleFoldSimilar() }) {

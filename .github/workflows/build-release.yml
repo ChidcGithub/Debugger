@@ -14,24 +14,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine build type
-        id: build_type
-        shell: bash
-        run: |
-          if [[ "${{ github.ref }}" =~ ^refs/tags/v.*-(beta|preview)[0-9]+$ ]]; then
-            echo "gradle_task=assembleDebug" >> $GITHUB_OUTPUT
-            echo "apk_dir=debug" >> $GITHUB_OUTPUT
-            echo "artifact_name=debugger-apk-debug" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
-            echo "gradle_task=assembleRelease" >> $GITHUB_OUTPUT
-            echo "apk_dir=release" >> $GITHUB_OUTPUT
-            echo "artifact_name=debugger-apk-release" >> $GITHUB_OUTPUT
-          else
-            echo "gradle_task=assembleDebug" >> $GITHUB_OUTPUT
-            echo "apk_dir=debug" >> $GITHUB_OUTPUT
-            echo "artifact_name=debugger-apk-debug" >> $GITHUB_OUTPUT
-          fi
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -80,13 +62,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build Android APK
-        run: ./gradlew ${{ steps.build_type.outputs.gradle_task }} --no-daemon --build-cache
+        run: ./gradlew assembleRelease --no-daemon --build-cache
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build_type.outputs.artifact_name }}
-          path: app/build/outputs/apk/${{ steps.build_type.outputs.apk_dir }}/*.apk
+          name: debugger-apk-release
+          path: app/build/outputs/apk/release/*.apk
 
   release:
     if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, '-beta') && !contains(github.ref, '-preview')

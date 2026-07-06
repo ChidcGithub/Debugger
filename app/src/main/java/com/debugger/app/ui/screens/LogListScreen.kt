@@ -121,13 +121,14 @@ fun LogListScreen(
                 onLevelToggle = { viewModel.toggleLevel(it) }
             )
 
+            val motionScheme = MaterialTheme.motionScheme
             AnimatedContent(
                 targetState = logs.isEmpty(),
                 transitionSpec = {
                     fadeIn(
-                        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
+                        animationSpec = motionScheme.defaultEffectsSpec()
                     ) togetherWith fadeOut(
-                        animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
+                        animationSpec = motionScheme.fastEffectsSpec()
                     )
                 },
                 label = "empty_content"

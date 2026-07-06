@@ -41,7 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.debugger.app.ui.components.GradientTopBar
+import com.debugger.app.ui.organisms.GradientTopBar
 import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.viewmodel.LogViewModel
 import kotlinx.coroutines.Dispatchers

@@ -75,15 +75,15 @@ val DebuggerTypography = Typography(
     bodyMedium = TextStyle(
         fontFamily = NunitoFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
         letterSpacing = 0.25.sp
     ),
     bodySmall = TextStyle(
         fontFamily = NunitoFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
         letterSpacing = 0.4.sp
     ),
     labelLarge = TextStyle(
@@ -103,7 +103,7 @@ val DebuggerTypography = Typography(
     labelSmall = TextStyle(
         fontFamily = NunitoFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 11.sp,
+        fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
     )

@@ -1,4 +1,4 @@
-package com.debugger.app.ui.components
+package com.debugger.app.ui.molecules
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -22,6 +22,8 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -57,7 +59,8 @@ fun FloatingActions(
             Column(horizontalAlignment = Alignment.End) {
                 SmallFloatingActionButton(
                     onClick = onExport,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    modifier = Modifier.semantics { contentDescription = "Export logs" }
                 ) {
                     Icon(
                         Icons.Default.FileDownload,
@@ -68,7 +71,8 @@ fun FloatingActions(
                 Spacer(modifier = Modifier.height(12.dp))
                 SmallFloatingActionButton(
                     onClick = onClear,
-                    containerColor = MaterialTheme.colorScheme.errorContainer
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    modifier = Modifier.semantics { contentDescription = "Clear all logs" }
                 ) {
                     Icon(
                         Icons.Default.Delete,
@@ -85,7 +89,8 @@ fun FloatingActions(
             containerColor = if (isCapturing)
                 MaterialTheme.colorScheme.error
             else
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { contentDescription = if (isCapturing) "Stop capturing" else "Start capturing" }
         ) {
             Icon(
                 imageVector = if (isCapturing) Icons.Default.Stop else Icons.Default.PlayArrow,

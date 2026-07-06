@@ -19,7 +19,7 @@ object LogLevelColors {
     val Info = Color(0xFF2196F3)
     val Warn = Color(0xFFFF9800)
     val Error = Color(0xFFF44336)
-    val Fatal = Color(0xFFB71C1C)
+    val Fatal = Color(0xFFEF5350)
 
     fun forLevel(level: String): Color = when (level) {
         "V" -> Verbose

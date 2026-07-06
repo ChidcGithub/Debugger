@@ -45,7 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.debugger.app.ui.components.GradientTopBar
+import com.debugger.app.ui.organisms.GradientTopBar
 import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.ui.theme.LogLevelColors
 import com.debugger.app.viewmodel.LogStats

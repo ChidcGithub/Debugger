@@ -44,11 +44,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogDisplayItem
-import com.debugger.app.ui.components.FilterBar
-import com.debugger.app.ui.components.FloatingActions
-import com.debugger.app.ui.components.GradientTopBar
-import com.debugger.app.ui.components.GroupedLogItem
-import com.debugger.app.ui.components.LogItem
+import com.debugger.app.ui.molecules.FilterBar
+import com.debugger.app.ui.molecules.FloatingActions
+import com.debugger.app.ui.molecules.GroupedLogItem
+import com.debugger.app.ui.molecules.LogItem
+import com.debugger.app.ui.organisms.GradientTopBar
 import com.debugger.app.viewmodel.LogViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

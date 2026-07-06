@@ -1,4 +1,4 @@
-package com.debugger.app.ui.components
+package com.debugger.app.ui.organisms
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -92,7 +94,9 @@ fun GradientTopBar(
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .semantics { contentDescription = "Back" }
                 ) {
                     Icon(
                         imageVector = navigationIcon,

@@ -1,4 +1,4 @@
-package com.debugger.app.ui.components
+package com.debugger.app.ui.molecules
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.horizontalScroll
@@ -27,6 +27,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.theme.LogLevelColors
@@ -51,10 +54,16 @@ fun FilterBar(
         OutlinedTextField(
             value = searchText,
             onValueChange = { searchText = it },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .semantics { contentDescription = "Search logs" },
             placeholder = { Text("Search logs...") },
             leadingIcon = {
-                Icon(Icons.Default.Search, contentDescription = "Search")
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    modifier = Modifier.semantics { contentDescription = "Search icon" }
+                )
             },
             singleLine = true,
             shape = MaterialTheme.shapes.large,
@@ -96,9 +105,9 @@ fun FilterBar(
                             text = name,
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = if (code in selectedLevels)
-                                androidx.compose.ui.text.font.FontWeight.Bold
+                                FontWeight.Bold
                             else
-                                androidx.compose.ui.text.font.FontWeight.Medium
+                                FontWeight.Medium
                         )
                     },
                     shape = MaterialTheme.shapes.small,
@@ -107,7 +116,10 @@ fun FilterBar(
                         selectedLabelColor = labelColor,
                         containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                         labelColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    ),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Filter by $name level, ${if (code in selectedLevels) "selected" else "not selected"}"
+                    }
                 )
             }
         }

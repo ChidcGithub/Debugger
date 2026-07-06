@@ -14,6 +14,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine build type
+        id: build_type
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "gradle_task=assembleRelease" >> $GITHUB_OUTPUT
+            echo "apk_dir=release" >> $GITHUB_OUTPUT
+            echo "artifact_name=debugger-apk-release" >> $GITHUB_OUTPUT
+          else
+            echo "gradle_task=assembleDebug" >> $GITHUB_OUTPUT
+            echo "apk_dir=debug" >> $GITHUB_OUTPUT
+            echo "artifact_name=debugger-apk-debug" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -62,16 +76,16 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build Android APK
-        run: ./gradlew assembleDebug --no-daemon --build-cache
+        run: ./gradlew ${{ steps.build_type.outputs.gradle_task }} --no-daemon --build-cache
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: debugger-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: ${{ steps.build_type.outputs.artifact_name }}
+          path: app/build/outputs/apk/${{ steps.build_type.outputs.apk_dir }}/*.apk
 
   release:
-    if: startsWith(github.ref, 'refs/tags/') && !contains(github.ref, '-beta') && !contains(github.ref, '-preview')
+    if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -81,10 +95,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Determine artifact name
+        id: artifact
+        shell: bash
+        run: |
+          if [[ "${{ github.ref }}" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "name=debugger-apk-release" >> $GITHUB_OUTPUT
+          else
+            echo "name=debugger-apk-debug" >> $GITHUB_OUTPUT
+          fi
+
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
-          name: debugger-apk
+          name: ${{ steps.artifact.outputs.name }}
 
       - name: Generate release body
         id: gen_body

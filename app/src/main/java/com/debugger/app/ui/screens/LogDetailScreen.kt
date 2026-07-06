@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,6 +66,7 @@ fun LogDetailScreen(
     val logs by viewModel.logs.collectAsState()
     val entry = logs.find { it.id == logId }
     val context = LocalContext.current
+    val isDark = isSystemInDarkTheme()
     var copied by remember { mutableStateOf(false) }
 
     val copyBackground by animateColorAsState(
@@ -112,7 +114,7 @@ fun LogDetailScreen(
             Card(
                 shape = DebuggerCardShapes.elevated,
                 colors = CardDefaults.cardColors(
-                    containerColor = LogLevelColors.surfaceForLevel(entry.level)
+                    containerColor = LogLevelColors.surfaceForLevel(entry.level, isDark)
                 )
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {

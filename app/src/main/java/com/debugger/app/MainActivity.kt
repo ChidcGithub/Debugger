@@ -2,8 +2,15 @@ package com.debugger.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -43,36 +50,56 @@ fun DebuggerApp(viewModel: LogViewModel = viewModel()) {
     var currentScreen by remember { mutableStateOf(Screen.LogList) }
     var selectedLogId by remember { mutableStateOf<Long?>(null) }
 
-    when (currentScreen) {
-        Screen.LogList -> LogListScreen(
-            viewModel = viewModel,
-            onNavigateToDetail = { logId ->
-                selectedLogId = logId
-                currentScreen = Screen.LogDetail
-            },
-            onNavigateToExport = {
-                currentScreen = Screen.Export
-            },
-            onNavigateToSettings = {
-                currentScreen = Screen.Settings
+    BackHandler(enabled = currentScreen != Screen.LogList) {
+        currentScreen = Screen.LogList
+        selectedLogId = null
+    }
+
+    AnimatedContent(
+        targetState = currentScreen,
+        transitionSpec = {
+            val forward = targetState.ordinal > initialState.ordinal
+            if (forward) {
+                (slideInHorizontally { fullWidth -> fullWidth } + fadeIn()) togetherWith
+                        (slideOutHorizontally { fullWidth -> -fullWidth / 3 } + fadeOut())
+            } else {
+                (slideInHorizontally { fullWidth -> -fullWidth } + fadeIn()) togetherWith
+                        (slideOutHorizontally { fullWidth -> fullWidth / 3 } + fadeOut())
             }
-        )
-        Screen.LogDetail -> LogDetailScreen(
-            logId = selectedLogId ?: 0L,
-            viewModel = viewModel,
-            onBack = { currentScreen = Screen.LogList }
-        )
-        Screen.Export -> ExportScreen(
-            viewModel = viewModel,
-            onBack = { currentScreen = Screen.LogList }
-        )
-        Screen.Settings -> SettingsScreen(
-            stats = viewModel.stats,
-            maxEntries = viewModel.maxEntries,
-            autoScroll = viewModel.autoScroll,
-            onMaxEntriesChange = { viewModel.updateMaxEntries(it) },
-            onAutoScrollToggle = { viewModel.toggleAutoScroll() },
-            onBack = { currentScreen = Screen.LogList }
-        )
+        },
+        label = "screen_nav"
+    ) { screen ->
+        when (screen) {
+            Screen.LogList -> LogListScreen(
+                viewModel = viewModel,
+                onNavigateToDetail = { logId ->
+                    selectedLogId = logId
+                    currentScreen = Screen.LogDetail
+                },
+                onNavigateToExport = {
+                    currentScreen = Screen.Export
+                },
+                onNavigateToSettings = {
+                    currentScreen = Screen.Settings
+                }
+            )
+            Screen.LogDetail -> LogDetailScreen(
+                logId = selectedLogId ?: 0L,
+                viewModel = viewModel,
+                onBack = { currentScreen = Screen.LogList }
+            )
+            Screen.Export -> ExportScreen(
+                viewModel = viewModel,
+                onBack = { currentScreen = Screen.LogList }
+            )
+            Screen.Settings -> SettingsScreen(
+                stats = viewModel.stats,
+                maxEntries = viewModel.maxEntries,
+                autoScroll = viewModel.autoScroll,
+                onMaxEntriesChange = { viewModel.updateMaxEntries(it) },
+                onAutoScrollToggle = { viewModel.toggleAutoScroll() },
+                onBack = { currentScreen = Screen.LogList }
+            )
+        }
     }
 }

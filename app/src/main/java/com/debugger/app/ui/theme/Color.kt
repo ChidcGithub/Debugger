@@ -31,6 +31,27 @@ object LogLevelColors {
     val ErrorSurface = Color(0xFFFCE4EC)
     val FatalSurface = Color(0xFFF3E5F5)
 
+    val VerboseSurfaceDark = Color(0xFF2C2C2C)
+    val DebugSurfaceDark = Color(0xFF1B3D1B)
+    val InfoSurfaceDark = Color(0xFF1A237E)
+    val WarnSurfaceDark = Color(0xFF3E2723)
+    val ErrorSurfaceDark = Color(0xFF4A1C1C)
+    val FatalSurfaceDark = Color(0xFF2D1B4E)
+
+    val VerboseContainerDark = Color(0xFF2C2C2C)
+    val DebugContainerDark = Color(0xFF1B3D1B)
+    val InfoContainerDark = Color(0xFF1A237E)
+    val WarnContainerDark = Color(0xFF3E2723)
+    val ErrorContainerDark = Color(0xFF4A1C1C)
+    val FatalContainerDark = Color(0xFF2D1B4E)
+
+    val OnVerboseContainerDark = Color(0xFFBDBDBD)
+    val OnDebugContainerDark = Color(0xFF81C784)
+    val OnInfoContainerDark = Color(0xFF90CAF9)
+    val OnWarnContainerDark = Color(0xFFFFAB91)
+    val OnErrorContainerDark = Color(0xFFEF9A9A)
+    val OnFatalContainerDark = Color(0xFFCE93D8)
+
     fun forLevel(level: String): Color = when (level) {
         "V" -> Verbose
         "D" -> Debug
@@ -41,33 +62,33 @@ object LogLevelColors {
         else -> Verbose
     }
 
-    fun containerForLevel(level: String): Color = when (level) {
-        "V" -> VerboseContainer
-        "D" -> DebugContainer
-        "I" -> InfoContainer
-        "W" -> WarnContainer
-        "E" -> ErrorContainer
-        "F" -> FatalContainer
+    fun containerForLevel(level: String, isDark: Boolean = false): Color = when (level) {
+        "V" -> if (isDark) VerboseContainerDark else VerboseContainer
+        "D" -> if (isDark) DebugContainerDark else DebugContainer
+        "I" -> if (isDark) InfoContainerDark else InfoContainer
+        "W" -> if (isDark) WarnContainerDark else WarnContainer
+        "E" -> if (isDark) ErrorContainerDark else ErrorContainer
+        "F" -> if (isDark) FatalContainerDark else FatalContainer
         else -> VerboseContainer
     }
 
-    fun onContainerForLevel(level: String): Color = when (level) {
-        "V" -> OnVerboseContainer
-        "D" -> OnDebugContainer
-        "I" -> OnInfoContainer
-        "W" -> OnWarnContainer
-        "E" -> OnErrorContainer
-        "F" -> OnFatalContainer
+    fun onContainerForLevel(level: String, isDark: Boolean = false): Color = when (level) {
+        "V" -> if (isDark) OnVerboseContainerDark else OnVerboseContainer
+        "D" -> if (isDark) OnDebugContainerDark else OnDebugContainer
+        "I" -> if (isDark) OnInfoContainerDark else OnInfoContainer
+        "W" -> if (isDark) OnWarnContainerDark else OnWarnContainer
+        "E" -> if (isDark) OnErrorContainerDark else OnErrorContainer
+        "F" -> if (isDark) OnFatalContainerDark else OnFatalContainer
         else -> OnVerboseContainer
     }
 
-    fun surfaceForLevel(level: String): Color = when (level) {
-        "V" -> VerboseSurface
-        "D" -> DebugSurface
-        "I" -> InfoSurface
-        "W" -> WarnSurface
-        "E" -> ErrorSurface
-        "F" -> FatalSurface
+    fun surfaceForLevel(level: String, isDark: Boolean = false): Color = when (level) {
+        "V" -> if (isDark) VerboseSurfaceDark else VerboseSurface
+        "D" -> if (isDark) DebugSurfaceDark else DebugSurface
+        "I" -> if (isDark) InfoSurfaceDark else InfoSurface
+        "W" -> if (isDark) WarnSurfaceDark else WarnSurface
+        "E" -> if (isDark) ErrorSurfaceDark else ErrorSurface
+        "F" -> if (isDark) FatalSurfaceDark else FatalSurface
         else -> VerboseSurface
     }
 }

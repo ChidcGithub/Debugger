@@ -55,8 +55,8 @@ object RustBridge {
     }
 
     @JvmStatic
-    fun onCaptureStateChanged(isRunning: Boolean) {
-        callback?.onCaptureStateChanged(isRunning)
+    fun onCaptureStateChanged(value: String) {
+        callback?.onCaptureStateChanged(value.toBoolean())
     }
 
     private external fun nativeInit(dbPath: String)

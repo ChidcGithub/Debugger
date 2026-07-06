@@ -50,8 +50,8 @@ pub fn start_capture() {
             }
             match line {
                 Ok(text) => {
-                    if let Some(entry) = parser::parse_line(&text) {
-                        storage::insert_entry(&entry);
+                    if let Some(mut entry) = parser::parse_line(&text) {
+                        entry.id = storage::insert_entry(&entry);
                         if let Ok(json) = serde_json::to_string(&entry) {
                             crate::java_callback("onLogEntry", &json);
                         }

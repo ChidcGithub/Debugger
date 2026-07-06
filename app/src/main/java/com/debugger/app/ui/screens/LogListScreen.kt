@@ -2,8 +2,6 @@ package com.debugger.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -21,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +46,7 @@ import com.debugger.app.ui.components.FloatingActions
 import com.debugger.app.ui.components.LogItem
 import com.debugger.app.viewmodel.LogViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LogListScreen(
     viewModel: LogViewModel,
@@ -126,15 +125,9 @@ fun LogListScreen(
                 targetState = logs.isEmpty(),
                 transitionSpec = {
                     fadeIn(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessLow
-                        )
+                        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec()
                     ) togetherWith fadeOut(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioNoBouncy,
-                            stiffness = Spring.StiffnessHigh
-                        )
+                        animationSpec = MaterialTheme.motionScheme.fastEffectsSpec()
                     )
                 },
                 label = "empty_content"

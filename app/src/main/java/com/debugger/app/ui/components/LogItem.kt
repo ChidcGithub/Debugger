@@ -1,8 +1,5 @@
 package com.debugger.app.ui.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -16,9 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +28,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogEntry
+import com.debugger.app.ui.theme.DebuggerLevelShapes
 import com.debugger.app.ui.theme.LogLevelColors
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LogItem(
     entry: LogEntry,
@@ -42,15 +40,6 @@ fun LogItem(
     modifier: Modifier = Modifier
 ) {
     val levelColor = LogLevelColors.forLevel(entry.level)
-    val containerColor = LogLevelColors.surfaceForLevel(entry.level)
-    val backgroundColor by animateColorAsState(
-        targetValue = levelColor.copy(alpha = 0.06f),
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "bg"
-    )
 
     Card(
         modifier = modifier
@@ -75,7 +64,7 @@ fun LogItem(
                 modifier = Modifier
                     .width(5.dp)
                     .height(80.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .clip(DebuggerLevelShapes.levelIndicator)
                     .background(levelColor)
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -91,7 +80,7 @@ fun LogItem(
                     Box(
                         modifier = Modifier
                             .size(24.dp)
-                            .clip(MaterialTheme.shapes.extraSmall)
+                            .clip(DebuggerLevelShapes.levelBadge)
                             .background(levelColor),
                         contentAlignment = Alignment.Center
                     ) {

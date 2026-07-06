@@ -13,6 +13,11 @@ val DebuggerTypography = Typography(
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp
     ),
+    displayMedium = TextStyle(
+        fontWeight = FontWeight.Bold,
+        fontSize = 45.sp,
+        lineHeight = 52.sp
+    ),
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
@@ -33,6 +38,12 @@ val DebuggerTypography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp
+    ),
+    titleSmall = TextStyle(
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.1.sp
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
@@ -57,6 +68,13 @@ val DebuggerTypography = Typography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp
+    ),
+    labelMedium = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.5.sp
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Monospace,

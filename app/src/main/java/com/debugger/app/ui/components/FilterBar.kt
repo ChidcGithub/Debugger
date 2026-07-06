@@ -1,8 +1,6 @@
 package com.debugger.app.ui.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -32,7 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.theme.LogLevelColors
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FilterBar(
     selectedLevels: Set<String>,
@@ -79,19 +78,13 @@ fun FilterBar(
                 val containerColor by animateColorAsState(
                     targetValue = if (code in selectedLevels) chipColor.copy(alpha = 0.2f)
                     else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    ),
+                    animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
                     label = "chip_$code"
                 )
                 val labelColor by animateColorAsState(
                     targetValue = if (code in selectedLevels) chipColor
                     else MaterialTheme.colorScheme.onSurfaceVariant,
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    ),
+                    animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
                     label = "chip_label_$code"
                 )
 

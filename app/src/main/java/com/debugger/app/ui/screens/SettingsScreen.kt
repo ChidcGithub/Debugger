@@ -1,8 +1,6 @@
 package com.debugger.app.ui.screens
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,11 +47,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.ui.theme.LogLevelColors
 import com.debugger.app.viewmodel.LogStats
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(
     stats: StateFlow<LogStats>,
@@ -65,16 +65,12 @@ fun SettingsScreen(
     val statsValue by stats.collectAsState()
     val maxEntriesValue by maxEntries.collectAsState()
     val autoScrollValue by autoScroll.collectAsState()
-    val springSpec = spring<Color>(
-        dampingRatio = Spring.DampingRatioMediumBouncy,
-        stiffness = Spring.StiffnessMedium
-    )
     val trackColor by animateColorAsState(
         targetValue = if (autoScrollValue)
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.surfaceVariant,
-        animationSpec = springSpec,
+        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
         label = "switch_track"
     )
 
@@ -130,7 +126,7 @@ fun SettingsScreen(
 private fun AppInfoCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = DebuggerCardShapes.elevated,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
@@ -183,7 +179,7 @@ private fun StatsCard(stats: LogStats) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = DebuggerCardShapes.contained,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
@@ -312,7 +308,7 @@ private fun PreferencesCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = DebuggerCardShapes.tonal,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )

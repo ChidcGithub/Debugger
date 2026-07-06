@@ -17,6 +17,20 @@ object LogLevelColors {
     val ErrorContainer = Color(0xFFFFEBEE)
     val FatalContainer = Color(0xFFFCE4EC)
 
+    val OnVerboseContainer = Color(0xFF616161)
+    val OnDebugContainer = Color(0xFF1B5E20)
+    val OnInfoContainer = Color(0xFF0D47A1)
+    val OnWarnContainer = Color(0xFFE65100)
+    val OnErrorContainer = Color(0xFFB71C1C)
+    val OnFatalContainer = Color(0xFFFFFFFF)
+
+    val VerboseSurface = Color(0xFFF5F5F5)
+    val DebugSurface = Color(0xFFF1F8E9)
+    val InfoSurface = Color(0xFFE8EAF6)
+    val WarnSurface = Color(0xFFFFF8E1)
+    val ErrorSurface = Color(0xFFFCE4EC)
+    val FatalSurface = Color(0xFFF3E5F5)
+
     fun forLevel(level: String): Color = when (level) {
         "V" -> Verbose
         "D" -> Debug
@@ -37,13 +51,23 @@ object LogLevelColors {
         else -> VerboseContainer
     }
 
+    fun onContainerForLevel(level: String): Color = when (level) {
+        "V" -> OnVerboseContainer
+        "D" -> OnDebugContainer
+        "I" -> OnInfoContainer
+        "W" -> OnWarnContainer
+        "E" -> OnErrorContainer
+        "F" -> OnFatalContainer
+        else -> OnVerboseContainer
+    }
+
     fun surfaceForLevel(level: String): Color = when (level) {
-        "V" -> Color(0xFFF5F5F5)
-        "D" -> Color(0xFFF1F8E9)
-        "I" -> Color(0xFFE8EAF6)
-        "W" -> Color(0xFFFFF8E1)
-        "E" -> Color(0xFFFCE4EC)
-        "F" -> Color(0xFFF3E5F5)
-        else -> Color(0xFFF5F5F5)
+        "V" -> VerboseSurface
+        "D" -> DebugSurface
+        "I" -> InfoSurface
+        "W" -> WarnSurface
+        "E" -> ErrorSurface
+        "F" -> FatalSurface
+        else -> VerboseSurface
     }
 }

@@ -1,8 +1,6 @@
 package com.debugger.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -16,6 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FloatingActions(
     isCapturing: Boolean,
@@ -34,6 +34,7 @@ fun FloatingActions(
     onClear: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val motionScheme = MaterialTheme.motionScheme
     Column(
         modifier = modifier.padding(end = 16.dp, bottom = 16.dp),
         horizontalAlignment = Alignment.End
@@ -41,27 +42,15 @@ fun FloatingActions(
         AnimatedVisibility(
             visible = showExtended,
             enter = fadeIn(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessMedium
-                )
+                animationSpec = motionScheme.fastEffectsSpec()
             ) + slideInVertically(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessMedium
-                ),
+                animationSpec = motionScheme.fastSpatialSpec(),
                 initialOffsetY = { it / 2 }
             ),
             exit = fadeOut(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessHigh
-                )
+                animationSpec = motionScheme.defaultEffectsSpec()
             ) + slideOutVertically(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioNoBouncy,
-                    stiffness = Spring.StiffnessHigh
-                ),
+                animationSpec = motionScheme.defaultSpatialSpec(),
                 targetOffsetY = { it / 2 }
             )
         ) {

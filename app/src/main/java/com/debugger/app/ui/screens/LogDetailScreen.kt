@@ -4,8 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +27,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,10 +50,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.debugger.app.model.LogEntry
+import com.debugger.app.ui.theme.DebuggerCardShapes
+import com.debugger.app.ui.theme.DebuggerLevelShapes
 import com.debugger.app.ui.theme.LogLevelColors
 import com.debugger.app.viewmodel.LogViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LogDetailScreen(
     logId: Long,
@@ -69,10 +70,7 @@ fun LogDetailScreen(
     val copyBackground by animateColorAsState(
         targetValue = if (copied) MaterialTheme.colorScheme.primaryContainer
         else MaterialTheme.colorScheme.primary,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
+        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
         label = "copy_bg"
     )
 
@@ -112,7 +110,7 @@ fun LogDetailScreen(
                 .padding(16.dp)
         ) {
             Card(
-                shape = MaterialTheme.shapes.large,
+                shape = DebuggerCardShapes.elevated,
                 colors = CardDefaults.cardColors(
                     containerColor = LogLevelColors.surfaceForLevel(entry.level)
                 )
@@ -151,7 +149,7 @@ fun LogDetailScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Card(
-                shape = MaterialTheme.shapes.medium,
+                shape = DebuggerCardShapes.contained,
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
@@ -223,7 +221,7 @@ private fun DetailRow(label: String, value: String, entry: LogEntry) {
                 Box(
                     modifier = Modifier
                         .size(20.dp)
-                        .clip(MaterialTheme.shapes.extraSmall)
+                        .clip(DebuggerLevelShapes.levelBadge)
                         .background(levelColor),
                     contentAlignment = Alignment.Center
                 ) {

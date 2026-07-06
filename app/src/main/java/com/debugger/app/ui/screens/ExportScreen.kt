@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
@@ -20,16 +21,16 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.viewmodel.LogViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,41 +91,31 @@ fun ExportScreen(
             )
 
             val formats = listOf(
-                "txt" to "Plain Text" to Icons.Default.Description,
-                "json" to "JSON" to Icons.Default.Code,
-                "csv" to "CSV" to Icons.Default.TableChart
+                Triple("txt", "Plain Text", Icons.Default.Description),
+                Triple("json", "JSON", Icons.Default.Code),
+                Triple("csv", "CSV", Icons.Default.TableChart)
             )
 
-            formats.forEach { (pair, icon) ->
-                val (value, label) = pair
-                    Card(
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                formats.forEachIndexed { index, (value, label, icon) ->
+                    SegmentedButton(
+                        selected = selectedFormat == value,
                         onClick = { selectedFormat = value },
-                        shape = MaterialTheme.shapes.medium,
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (selectedFormat == value)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = formats.size
+                        ),
+                        icon = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
                     ) {
-                        Icon(icon, contentDescription = null)
-                        Text(
-                            text = label,
-                            modifier = Modifier.weight(1f),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        RadioButton(
-                            selected = selectedFormat == value,
-                            onClick = { selectedFormat = value }
-                        )
+                        Text(label)
                     }
                 }
             }
@@ -150,7 +142,7 @@ fun ExportScreen(
 
             if (exportSuccess) {
                 Card(
-                    shape = MaterialTheme.shapes.medium,
+                    shape = DebuggerCardShapes.contained,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )

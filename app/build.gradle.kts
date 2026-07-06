@@ -20,10 +20,15 @@ android {
         }
     }
 
+    signingConfigs {
+        getByName("debug") {
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

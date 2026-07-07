@@ -1,7 +1,7 @@
 package com.debugger.app.ui.organisms
 
-import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background

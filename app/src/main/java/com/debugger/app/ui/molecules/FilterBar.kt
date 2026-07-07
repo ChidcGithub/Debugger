@@ -1,8 +1,8 @@
 package com.debugger.app.ui.molecules
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.theme.LogLevelColors
 
@@ -43,7 +44,7 @@ private val springSpec = spring<Float>(
     stiffness = Spring.StiffnessLow
 )
 
-private val springSpecDp = spring<Float>(
+private val springSpecDp = spring<Dp>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessLow
 )
@@ -63,7 +64,7 @@ fun FilterBar(
 
     val searchHeight by animateDpAsState(
         targetValue = if (searchExpanded) 56.dp else 48.dp,
-        animationSpec = spring(dampingRatio = 0.6f, stiffness = 300f),
+        animationSpec = spring<Dp>(dampingRatio = 0.6f, stiffness = 300f),
         label = "search_height"
     )
 

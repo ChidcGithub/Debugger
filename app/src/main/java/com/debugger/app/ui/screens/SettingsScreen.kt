@@ -62,6 +62,11 @@ private val springSpec = spring<Float>(
     stiffness = Spring.StiffnessMedium
 )
 
+private val colorSpringSpec = spring<Color>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMedium
+)
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(
@@ -80,7 +85,7 @@ fun SettingsScreen(
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.surfaceVariant,
-        animationSpec = springSpec,
+        animationSpec = colorSpringSpec,
         label = "switch_track"
     )
 

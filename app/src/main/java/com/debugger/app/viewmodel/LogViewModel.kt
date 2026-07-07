@@ -56,6 +56,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
     private val _displayLogs = MutableStateFlow<List<LogDisplayItem>>(emptyList())
     val displayLogs: StateFlow<List<LogDisplayItem>> = _displayLogs.asStateFlow()
 
+    private val _selectedLogId = MutableStateFlow<Long?>(null)
+    val selectedLogId: StateFlow<Long?> = _selectedLogId.asStateFlow()
+
     private val allEntries = mutableListOf<LogEntry>()
 
     init {
@@ -215,6 +218,10 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
             i += count
         }
         return result
+    }
+
+    fun selectLog(id: Long?) {
+        _selectedLogId.value = id
     }
 
     fun clearAllLogs() {

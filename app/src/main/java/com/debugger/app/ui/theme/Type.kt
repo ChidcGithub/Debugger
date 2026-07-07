@@ -108,3 +108,11 @@ val DebuggerTypography = Typography(
         letterSpacing = 0.5.sp
     )
 )
+
+object EmphasizedType {
+    val bodyLargeBold = DebuggerTypography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+    val bodyMediumBold = DebuggerTypography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+    val labelLargeBold = DebuggerTypography.labelLarge.copy(fontWeight = FontWeight.Bold)
+    val titleMediumBold = DebuggerTypography.titleMedium.copy(fontWeight = FontWeight.Bold)
+    val titleSmallBold = DebuggerTypography.titleSmall.copy(fontWeight = FontWeight.Bold)
+}

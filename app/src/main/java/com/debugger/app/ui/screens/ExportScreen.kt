@@ -5,6 +5,10 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +34,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,10 +42,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.organisms.GradientTopBar
-import com.debugger.app.ui.theme.DebuggerCardShapes
 import com.debugger.app.viewmodel.LogViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,9 +136,18 @@ fun ExportScreen(
                 Text("Export")
             }
 
-            if (exportSuccess) {
+            AnimatedVisibility(
+                visible = exportSuccess,
+                enter = slideInVertically(
+                    animationSpec = spring(dampingRatio = 0.6f, stiffness = 300f),
+                    initialOffsetY = { it / 2 }
+                ) + fadeIn(
+                    animationSpec = spring(dampingRatio = 0.8f, stiffness = 200f)
+                ),
+                exit = fadeIn()
+            ) {
                 Card(
-                    shape = DebuggerCardShapes.contained,
+                    shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     )

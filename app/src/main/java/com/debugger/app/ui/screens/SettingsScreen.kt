@@ -1,11 +1,17 @@
 package com.debugger.app.ui.screens
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,14 +31,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,16 +45,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.organisms.GradientTopBar
-import com.debugger.app.ui.theme.DebuggerCardShapes
+import com.debugger.app.ui.theme.EmphasizedType
 import com.debugger.app.ui.theme.LogLevelColors
 import com.debugger.app.viewmodel.LogStats
 import kotlinx.coroutines.flow.StateFlow
+
+private val springSpec = spring<Float>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMedium
+)
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -69,7 +80,7 @@ fun SettingsScreen(
             MaterialTheme.colorScheme.primary
         else
             MaterialTheme.colorScheme.surfaceVariant,
-        animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+        animationSpec = springSpec,
         label = "switch_track"
     )
 
@@ -91,7 +102,7 @@ fun SettingsScreen(
         ) {
             AppInfoCard()
             Spacer(modifier = Modifier.height(16.dp))
-            StatsCard(stats = statsValue)
+            StatsCard(stats = statsValue, total = statsValue.total)
             Spacer(modifier = Modifier.height(16.dp))
             PreferencesCard(
                 maxEntries = maxEntriesValue,
@@ -111,15 +122,13 @@ fun SettingsScreen(
 private fun AppInfoCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = DebuggerCardShapes.elevated,
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
+            modifier = Modifier.fillMaxWidth().padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -136,7 +145,7 @@ private fun AppInfoCard() {
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    text = "v0.0.1.3",
+                    text = "v0.0.1.4",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -152,7 +161,7 @@ private fun AppInfoCard() {
 }
 
 @Composable
-private fun StatsCard(stats: LogStats) {
+private fun StatsCard(stats: LogStats, total: Long) {
     val levelLabels = listOf(
         "V" to "VERBOSE",
         "D" to "DEBUG",
@@ -162,9 +171,15 @@ private fun StatsCard(stats: LogStats) {
         "F" to "FATAL"
     )
 
+    val animatedTotal by animateFloatAsState(
+        targetValue = total.toFloat(),
+        animationSpec = springSpec,
+        label = "total_count"
+    )
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = DebuggerCardShapes.contained,
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
@@ -172,8 +187,7 @@ private fun StatsCard(stats: LogStats) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
                 text = "Statistics",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+                style = EmphasizedType.titleMediumBold
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
@@ -186,7 +200,7 @@ private fun StatsCard(stats: LogStats) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = formatCount(stats.total),
+                    text = formatCount(animatedTotal.toLong()),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
@@ -195,7 +209,8 @@ private fun StatsCard(stats: LogStats) {
             HorizontalDivider()
             Spacer(modifier = Modifier.height(12.dp))
             levelLabels.forEach { (level, label) ->
-                LevelRow(level = level, label = label, count = stats.levels[level] ?: 0L)
+                val count = stats.levels[level] ?: 0L
+                LevelBarRow(level = level, label = label, count = count, total = total)
                 if (level != "F") {
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -206,8 +221,7 @@ private fun StatsCard(stats: LogStats) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Top Tags",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
+                    style = EmphasizedType.titleSmallBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -223,35 +237,59 @@ private fun StatsCard(stats: LogStats) {
 }
 
 @Composable
-private fun LevelRow(level: String, label: String, count: Long) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Canvas(
-            modifier = Modifier.size(10.dp)
+private fun LevelBarRow(level: String, label: String, count: Long, total: Long) {
+    val levelColor = LogLevelColors.forLevel(level)
+    val fraction = if (total > 0) count.toFloat() / total.toFloat() else 0f
+    val animatedFraction by animateFloatAsState(
+        targetValue = fraction,
+        animationSpec = springSpec,
+        label = "bar_$level"
+    )
+
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            drawCircle(color = LogLevelColors.forLevel(level))
+            Canvas(modifier = Modifier.size(10.dp)) {
+                drawCircle(color = levelColor)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = level,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.width(24.dp)
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = formatCount(count),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = level,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(24.dp)
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
-        Text(
-            text = formatCount(count),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium
-        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(animatedFraction)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(levelColor.copy(alpha = 0.7f))
+            )
+        }
     }
 }
 
@@ -293,7 +331,7 @@ private fun PreferencesCard(
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = DebuggerCardShapes.tonal,
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
@@ -309,8 +347,7 @@ private fun PreferencesCard(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Preferences",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    style = EmphasizedType.titleMediumBold
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))

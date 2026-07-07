@@ -1,11 +1,15 @@
 package com.debugger.app.ui.molecules
 
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,6 +38,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.theme.LogLevelColors
 
+private val springSpec = spring<Float>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessLow
+)
+
+private val springSpecDp = spring<Float>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessLow
+)
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun FilterBar(
@@ -45,6 +59,13 @@ fun FilterBar(
 ) {
     val levels = listOf("V" to "VERBOSE", "D" to "DEBUG", "I" to "INFO", "W" to "WARN", "E" to "ERROR", "F" to "FATAL")
     var searchText by remember(keyword) { mutableStateOf(keyword) }
+    var searchExpanded by remember { mutableStateOf(false) }
+
+    val searchHeight by animateDpAsState(
+        targetValue = if (searchExpanded) 56.dp else 48.dp,
+        animationSpec = spring(dampingRatio = 0.6f, stiffness = 300f),
+        label = "search_height"
+    )
 
     Column(
         modifier = modifier
@@ -53,9 +74,13 @@ fun FilterBar(
     ) {
         OutlinedTextField(
             value = searchText,
-            onValueChange = { searchText = it },
+            onValueChange = {
+                searchText = it
+                searchExpanded = it.isNotEmpty()
+            },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(searchHeight)
                 .semantics { contentDescription = "Search logs" },
             placeholder = { Text("Search logs...") },
             leadingIcon = {
@@ -87,13 +112,13 @@ fun FilterBar(
                 val containerColor by animateColorAsState(
                     targetValue = if (code in selectedLevels) chipColor.copy(alpha = 0.2f)
                     else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                    animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
+                    animationSpec = spring(dampingRatio = 0.6f, stiffness = 350f),
                     label = "chip_$code"
                 )
                 val labelColor by animateColorAsState(
                     targetValue = if (code in selectedLevels) chipColor
                     else MaterialTheme.colorScheme.onSurfaceVariant,
-                    animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
+                    animationSpec = spring(dampingRatio = 0.6f, stiffness = 350f),
                     label = "chip_label_$code"
                 )
 

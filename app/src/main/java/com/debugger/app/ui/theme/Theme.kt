@@ -13,68 +13,72 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
-    primary = DebuggerColors.PurplePrimary,
-    onPrimary = Color(0xFF1A1326),
-    primaryContainer = Color(0xFF4A2080),
-    onPrimaryContainer = Color(0xFFEAE0F5),
-    secondary = Color(0xFFCE93D8),
-    onSecondary = Color(0xFF1A1326),
-    tertiary = Color(0xFFFF8A65),
-    onTertiary = Color(0xFF1A1326),
-    background = DebuggerColors.PurpleDark,
-    onBackground = DebuggerColors.PurpleOnBg,
-    surface = DebuggerColors.PurpleSurface,
-    onSurface = DebuggerColors.PurpleOnSurface,
-    surfaceVariant = Color(0xFF31284D),
-    onSurfaceVariant = Color(0xFFC2B5D6),
-    surfaceContainerLow = DebuggerColors.PurpleSurfaceLow,
-    surfaceContainer = DebuggerColors.PurpleSurface,
-    surfaceContainerHigh = DebuggerColors.PurpleSurfaceHigh,
-    surfaceContainerHighest = Color(0xFF3F3660),
-    surfaceBright = Color(0xFF3F3660),
-    surfaceDim = DebuggerColors.PurpleDark,
-    outline = DebuggerColors.PurpleOutline,
-    outlineVariant = Color(0xFF49425A),
-    error = Color(0xFFEF9A9A),
-    onError = Color(0xFF1A1326),
-    errorContainer = Color(0xFF93000A),
-    onErrorContainer = Color(0xFFFFDAD6),
-    inverseSurface = Color(0xFFEAE0F5),
-    inverseOnSurface = Color(0xFF1A1326),
-    inversePrimary = Color(0xFF7B1FA2),
-    scrim = Color(0xFF000000),
+private val Md3DarkColorScheme = darkColorScheme(
+    primary = Color(0xFFD0BCFF),
+    onPrimary = Color(0xFF381E72),
+    primaryContainer = Color(0xFF4F378B),
+    onPrimaryContainer = Color(0xFFEADDFF),
+    secondary = Color(0xFFCCC2DC),
+    onSecondary = Color(0xFF332D41),
+    secondaryContainer = Color(0xFF4A4458),
+    onSecondaryContainer = Color(0xFFE8DEF8),
+    tertiary = Color(0xFFEFB8C8),
+    onTertiary = Color(0xFF492532),
+    tertiaryContainer = Color(0xFF633B48),
+    onTertiaryContainer = Color(0xFFFFD8E4),
+    error = Color(0xFFF2B8B5),
+    onError = Color(0xFF601410),
+    errorContainer = Color(0xFF8C1D18),
+    onErrorContainer = Color(0xFFF9DEDC),
+    surface = Color(0xFF141218),
+    onSurface = Color(0xFFE6E0E9),
+    onSurfaceVariant = Color(0xFFCAC4D0),
+    surfaceContainerLowest = Color(0xFF0F0D13),
+    surfaceContainerLow = Color(0xFF1D1B20),
+    surfaceContainer = Color(0xFF211F26),
+    surfaceContainerHigh = Color(0xFF2B2930),
+    surfaceContainerHighest = Color(0xFF36343B),
+    surfaceDim = Color(0xFF141218),
+    surfaceBright = Color(0xFF3B383E),
+    outline = Color(0xFF938F99),
+    outlineVariant = Color(0xFF49454F),
+    inverseSurface = Color(0xFFE6E0E9),
+    inverseOnSurface = Color(0xFF322F35),
+    inversePrimary = Color(0xFF6750A4),
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF7B1FA2),
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFFF3E5F5),
-    onPrimaryContainer = Color(0xFF2D0B3F),
-    secondary = Color(0xFF9C27B0),
-    onSecondary = Color.White,
-    tertiary = Color(0xFFE65100),
-    onTertiary = Color.White,
-    background = Color(0xFFF7F2FF),
-    onBackground = Color(0xFF1A1326),
-    surface = Color.White,
-    onSurface = Color(0xFF1A1326),
-    surfaceVariant = Color(0xFFF3E5F5),
-    onSurfaceVariant = Color(0xFF49425A),
-    surfaceContainerLow = Color(0xFFFCF8FF),
-    surfaceContainer = Color(0xFFF7F2FF),
-    surfaceContainerHigh = Color(0xFFF1EBF8),
-    surfaceContainerHighest = Color(0xFFEBE5F2),
-    outline = Color(0xFF7C7587),
-    outlineVariant = Color(0xFFCEC4DB),
-    error = Color(0xFFB71C1C),
-    onError = Color.White,
-    errorContainer = Color(0xFFFFDAD6),
-    onErrorContainer = Color(0xFF410002),
-    inverseSurface = Color(0xFF1A1326),
-    inverseOnSurface = Color(0xFFEAE0F5),
-    inversePrimary = Color(0xFFBB86FC),
-    scrim = Color(0xFF000000),
+private val Md3LightColorScheme = lightColorScheme(
+    primary = Color(0xFF6750A4),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFEADDFF),
+    onPrimaryContainer = Color(0xFF21005D),
+    secondary = Color(0xFF625B71),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFE8DEF8),
+    onSecondaryContainer = Color(0xFF1D192B),
+    tertiary = Color(0xFF7D5260),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFFFD8E4),
+    onTertiaryContainer = Color(0xFF31111D),
+    error = Color(0xFFB3261E),
+    onError = Color(0xFFFFFFFF),
+    errorContainer = Color(0xFFF9DEDC),
+    onErrorContainer = Color(0xFF410E0B),
+    surface = Color(0xFFFEF7FF),
+    onSurface = Color(0xFF1D1B20),
+    onSurfaceVariant = Color(0xFF49454F),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFF7F2FA),
+    surfaceContainer = Color(0xFFF3EDF7),
+    surfaceContainerHigh = Color(0xFFECE6F0),
+    surfaceContainerHighest = Color(0xFFE6E0E9),
+    surfaceDim = Color(0xFFDED8E1),
+    surfaceBright = Color(0xFFFEF7FF),
+    outline = Color(0xFF79747E),
+    outlineVariant = Color(0xFFCAC4D0),
+    inverseSurface = Color(0xFF322F35),
+    inverseOnSurface = Color(0xFFF5EFF7),
+    inversePrimary = Color(0xFFD0BCFF),
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -84,29 +88,10 @@ fun DebuggerTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && darkTheme -> {
-            val context = LocalContext.current
-            dynamicDarkColorScheme(context).copy(
-                background = DebuggerColors.PurpleDark,
-                onBackground = DebuggerColors.PurpleOnBg,
-                surface = DebuggerColors.PurpleSurface,
-                onSurface = DebuggerColors.PurpleOnSurface,
-                surfaceContainerLow = DebuggerColors.PurpleSurfaceLow,
-                surfaceContainer = DebuggerColors.PurpleSurface,
-                surfaceContainerHigh = DebuggerColors.PurpleSurfaceHigh,
-                outline = DebuggerColors.PurpleOutline,
-                primary = DebuggerColors.PurplePrimary,
-            )
-        }
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            dynamicLightColorScheme(context).copy(
-                background = Color(0xFFF7F2FF),
-                primary = Color(0xFF7B1FA2),
-            )
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> dynamicLightColorScheme(LocalContext.current)
+        darkTheme -> Md3DarkColorScheme
+        else -> Md3LightColorScheme
     }
 
     MaterialTheme(

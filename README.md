@@ -1,5 +1,7 @@
 # Debugger
 
+> [!TIP] This project is fully written by DeepSeek for test purposes.
+
 A real-time Android `logcat` viewer built with **Kotlin + Jetpack Compose** (frontend) and **Rust** (backend engine), communicating via **JNI**.
 
 ## Architecture

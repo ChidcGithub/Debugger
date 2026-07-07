@@ -1,7 +1,7 @@
 package com.debugger.app.ui.organisms
 
+import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -39,7 +39,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-private val springSpec = spring<Float>(
+private val springFloatSpec = spring<Float>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMedium
+)
+
+private val springDpSpec = spring<androidx.compose.ui.unit.Dp>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessMedium
 )
@@ -55,25 +60,25 @@ fun GradientTopBar(
     modifier: Modifier = Modifier
 ) {
     val expandedHeight = TopAppBarDefaults.TopAppBarExpandedHeight
-    val collapsedHeight = TopAppBarDefaults.TopAppBarCollapsedHeight
+    val collapsedHeight = 64.dp
     val expandedTitleAlpha = 1f - collapsedFraction.coerceIn(0f, 1f)
     val collapsedTitleAlpha = collapsedFraction.coerceIn(0.5f, 1f).let { (it - 0.5f) * 2f }
 
     val topBarHeight by animateDpAsState(
         targetValue = expandedHeight - (expandedHeight - collapsedHeight) * collapsedFraction,
-        animationSpec = springSpec,
+        animationSpec = springDpSpec,
         label = "topbar_height"
     )
 
     val cornerRadius by animateDpAsState(
         targetValue = 28.dp * (1f - collapsedFraction),
-        animationSpec = springSpec,
+        animationSpec = springDpSpec,
         label = "corner_radius"
     )
 
     val titleScale by animateFloatAsState(
         targetValue = 1f - collapsedFraction * 0.4f,
-        animationSpec = springSpec,
+        animationSpec = springFloatSpec,
         label = "title_scale"
     )
 

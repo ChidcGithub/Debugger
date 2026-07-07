@@ -1,8 +1,8 @@
 package com.debugger.app.ui.molecules
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement

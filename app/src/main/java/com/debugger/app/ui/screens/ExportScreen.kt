@@ -144,7 +144,7 @@ fun ExportScreen(
                 ) + fadeIn(
                     animationSpec = spring(dampingRatio = 0.8f, stiffness = 200f)
                 ),
-                exit = fadeIn()
+                exit = fadeOut()
             ) {
                 Card(
                     shape = MaterialTheme.shapes.medium,

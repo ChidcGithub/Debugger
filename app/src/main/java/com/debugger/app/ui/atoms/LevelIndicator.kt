@@ -1,6 +1,6 @@
 package com.debugger.app.ui.atoms
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

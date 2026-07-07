@@ -69,7 +69,7 @@ fun LogItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .scale(itemScale)
             .alpha(itemAlpha)
             .clip(MaterialTheme.shapes.medium)
@@ -100,7 +100,7 @@ fun LogItem(
                 LevelIndicator(levelColor)
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
-                    modifier = Modifier.weight(1f).padding(vertical = 10.dp, horizontal = 4.dp)
+                    modifier = Modifier.weight(1f).padding(vertical = 8.dp, horizontal = 4.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

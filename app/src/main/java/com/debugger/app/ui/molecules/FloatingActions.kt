@@ -77,7 +77,9 @@ fun FloatingActions(
                 SmallFloatingActionButton(
                     onClick = onExport,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    modifier = Modifier.semantics { contentDescription = "Export logs" }
+                    modifier = Modifier
+                        .size(48.dp)
+                        .semantics { contentDescription = "Export logs" }
                 ) {
                     Icon(
                         Icons.Default.FileDownload,
@@ -89,7 +91,9 @@ fun FloatingActions(
                 SmallFloatingActionButton(
                     onClick = onClear,
                     containerColor = MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier.semantics { contentDescription = "Clear all logs" }
+                    modifier = Modifier
+                        .size(48.dp)
+                        .semantics { contentDescription = "Clear all logs" }
                 ) {
                     Icon(
                         Icons.Default.Delete,

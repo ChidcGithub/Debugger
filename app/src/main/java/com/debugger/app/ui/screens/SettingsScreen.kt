@@ -233,7 +233,7 @@ private fun StatsCard(stats: LogStats, total: Long) {
                 stats.topTags.take(5).forEachIndexed { index, (tag, count) ->
                     TagRow(index = index + 1, tag = tag, count = count)
                     if (index < minOf(stats.topTags.size, 5) - 1) {
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }

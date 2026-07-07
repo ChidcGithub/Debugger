@@ -105,11 +105,11 @@ fun ExportScreen(
                             count = formats.size
                         ),
                         icon = {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
+                Icon(
+                                    imageVector = icon,
+                                    contentDescription = "$label format",
+                                    modifier = Modifier.size(18.dp)
+                                )
                         }
                     ) {
                         Text(label)

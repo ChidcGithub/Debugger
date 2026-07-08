@@ -43,8 +43,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
+
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.debugger.app.ui.organisms.GradientTopBar
@@ -53,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -183,32 +183,52 @@ fun ExportScreen(
     }
 }
 
-private fun exportLog(context: Context, format: String, viewModel: LogViewModel): String? {
-    val fileName = "debugger_logs_${System.currentTimeMillis()}.$format"
-
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val values = ContentValues().apply {
-            put(MediaStore.Downloads.DISPLAY_NAME, fileName)
-            put(MediaStore.Downloads.MIME_TYPE, when (format) {
-                "json" -> "application/json"
-                "csv" -> "text/csv"
-                else -> "text/plain"
-            })
-            put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+private suspend fun exportLog(context: Context, format: String, viewModel: LogViewModel): String? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val fileName = "debugger_logs_${System.currentTimeMillis()}.$format"
+            val path = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                exportToMediaStore(context, fileName, format, viewModel)
+            } else {
+                exportToLegacy(fileName, format, viewModel)
+            }
+            path
+        } catch (_: IOException) {
+            null
         }
-        val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-            ?: return null
-        context.contentResolver.openOutputStream(uri)?.use { stream ->
-            val file = File(context.cacheDir, fileName)
-            viewModel.exportLogs(file.absolutePath, format)
-            file.inputStream().copyTo(stream)
-            file.delete()
-        }
-        "Downloads/$fileName"
-    } else {
-        val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val file = File(dir, fileName)
-        viewModel.exportLogs(file.absolutePath, format)
-        file.absolutePath
     }
+}
+
+private fun exportToMediaStore(context: Context, fileName: String, format: String, viewModel: LogViewModel): String? {
+    val values = ContentValues().apply {
+        put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+        put(MediaStore.Downloads.MIME_TYPE, when (format) {
+            "json" -> "application/json"
+            "csv" -> "text/csv"
+            else -> "text/plain"
+        })
+        put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+    }
+    val uri = context.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+        ?: return null
+
+    val cacheFile = File(context.cacheDir, fileName)
+    viewModel.exportLogs(cacheFile.absolutePath, format)
+
+    context.contentResolver.openOutputStream(uri)?.use { output ->
+        cacheFile.inputStream().use { input ->
+            input.copyTo(output)
+        }
+    } ?: return null
+
+    cacheFile.delete()
+    return "Downloads/$fileName"
+}
+
+private fun exportToLegacy(fileName: String, format: String, viewModel: LogViewModel): String? {
+    val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        ?: return null
+    val file = File(dir, fileName)
+    viewModel.exportLogs(file.absolutePath, format)
+    return file.absolutePath
 }

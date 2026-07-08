@@ -88,7 +88,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                 }
                 applyFilter()
                 refreshStats()
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                _error.value = "Failed to parse log entry: ${e.message}"
+            }
         }
     }
 
@@ -141,7 +143,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                 val entries = parseLogEntries(result)
                 _logs.value = entries
                 refreshDisplay()
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                _error.value = "Failed to refresh logs: ${e.message}"
+            }
         }
     }
 
@@ -162,17 +166,15 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                     }
                 } ?: emptyList()
                 _stats.value = LogStats(total = total, levels = levels, topTags = topTags)
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                _error.value = "Failed to refresh stats: ${e.message}"
+            }
         }
     }
 
     fun exportLogs(path: String, format: String) {
-        viewModelScope.launch {
-            try {
-                val filterJson = buildFilterJson()
-                RustBridge.exportLogs(path, format, filterJson)
-            } catch (_: Exception) { }
-        }
+        val filterJson = buildFilterJson()
+        RustBridge.exportLogs(path, format, filterJson)
     }
 
     fun updateMaxEntries(count: Int) {
@@ -269,7 +271,9 @@ class LogViewModel(application: Application) : AndroidViewModel(application), Lo
                     )
                 )
             }
-        } catch (_: Exception) { }
+        } catch (_: Exception) {
+            // malformed JSON, return whatever we parsed so far
+        }
         return entries
     }
 

@@ -12,14 +12,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.GenericShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.debugger.app.ui.theme.DebuggerLevelShapes
 
 private val springSpec = spring<Dp>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessMedium
 )
+
+private val diagonalClip = GenericShape { size, _ ->
+    moveTo(0f, 0f)
+    lineTo(size.width, 0f)
+    lineTo(size.width * 0.3f, size.height)
+    lineTo(0f, size.height)
+    close()
+}
 
 @Composable
 fun LevelIndicator(levelColor: Color, expanded: Boolean = true) {
@@ -33,7 +41,7 @@ fun LevelIndicator(levelColor: Color, expanded: Boolean = true) {
         modifier = Modifier
             .width(indicatorWidth)
             .fillMaxHeight()
-            .clip(DebuggerLevelShapes.levelIndicator)
+            .clip(diagonalClip)
             .background(levelColor)
     )
 }

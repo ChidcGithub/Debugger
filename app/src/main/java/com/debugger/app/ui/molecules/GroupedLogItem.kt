@@ -1,5 +1,6 @@
 package com.debugger.app.ui.molecules
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -29,9 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -51,12 +52,16 @@ fun GroupedLogItem(
     count: Int,
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
+    index: Int = 0,
     modifier: Modifier = Modifier
 ) {
     val levelColor = LogLevelColors.forLevel(entry.level)
     var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
-
+    val shapeDp by animateDpAsState(
+        targetValue = if (visible) 16.dp else 0.dp,
+        animationSpec = spring(dampingRatio = 0.5f, stiffness = 350f),
+        label = "corner_morph"
+    )
     val itemScale by animateFloatAsState(
         targetValue = if (visible) 1f else 0.9f,
         animationSpec = spring(dampingRatio = 0.6f, stiffness = 300f),
@@ -67,14 +72,26 @@ fun GroupedLogItem(
         animationSpec = spring(dampingRatio = 0.8f, stiffness = 200f),
         label = "item_alpha"
     )
+    val cardShape = remember(shapeDp) { RoundedCornerShape(topEnd = shapeDp, bottomStart = shapeDp) }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(index * 40L)
+        visible = true
+    }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .scale(itemScale)
-            .alpha(itemAlpha)
-            .clip(MaterialTheme.shapes.medium)
+            .graphicsLayer {
+                scaleX = itemScale
+                scaleY = itemScale
+                this.alpha = itemAlpha
+                transformOrigin = TransformOrigin(
+                    if (index % 2 == 0) 0f else 1f, 0.5f
+                )
+            }
+            .clip(cardShape)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
@@ -82,7 +99,7 @@ fun GroupedLogItem(
             .semantics {
                 contentDescription = "Grouped log: ${entry.level} ${entry.tag}, $count similar entries"
             },
-        shape = MaterialTheme.shapes.medium,
+        shape = cardShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
@@ -91,11 +108,11 @@ fun GroupedLogItem(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium)
+                .clip(cardShape)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                    shape = MaterialTheme.shapes.medium
+                    shape = cardShape
                 )
         ) {
             Row(modifier = Modifier.fillMaxWidth().padding(start = 4.dp)) {

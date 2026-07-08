@@ -8,6 +8,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -105,17 +106,43 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            AppInfoCard()
-            Spacer(modifier = Modifier.height(16.dp))
-            StatsCard(stats = statsValue, total = statsValue.total)
-            Spacer(modifier = Modifier.height(16.dp))
-            PreferencesCard(
-                maxEntries = maxEntriesValue,
-                autoScroll = autoScrollValue,
-                onMaxEntriesChange = onMaxEntriesChange,
-                onAutoScrollToggle = onAutoScrollToggle,
-                trackColor = trackColor
-            )
+            BoxWithConstraints {
+                val isWide = maxWidth >= 600.dp
+
+                if (isWide) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            AppInfoCard()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            StatsCard(stats = statsValue, total = statsValue.total)
+                        }
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            PreferencesCard(
+                                maxEntries = maxEntriesValue,
+                                autoScroll = autoScrollValue,
+                                onMaxEntriesChange = onMaxEntriesChange,
+                                onAutoScrollToggle = onAutoScrollToggle,
+                                trackColor = trackColor
+                            )
+                        }
+                    }
+                } else {
+                    Column {
+                        AppInfoCard()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        StatsCard(stats = statsValue, total = statsValue.total)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        PreferencesCard(
+                            maxEntries = maxEntriesValue,
+                            autoScroll = autoScrollValue,
+                            onMaxEntriesChange = onMaxEntriesChange,
+                            onAutoScrollToggle = onAutoScrollToggle,
+                            trackColor = trackColor
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(24.dp))
             FooterText()
             Spacer(modifier = Modifier.height(16.dp))

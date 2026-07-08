@@ -16,3 +16,8 @@ object DebuggerLevelShapes {
     val levelIndicator = RoundedCornerShape(topEnd = 6.dp, bottomEnd = 6.dp)
     val levelBadge = RoundedCornerShape(6.dp)
 }
+
+object DebuggerExpressiveShapes {
+    val logItemCard = RoundedCornerShape(topStart = 16.dp, bottomEnd = 16.dp)
+    val groupedLogItemCard = RoundedCornerShape(topEnd = 16.dp, bottomStart = 16.dp)
+}

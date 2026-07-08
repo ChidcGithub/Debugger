@@ -32,7 +32,7 @@ fun LevelBadge(level: String, levelColor: Color, visible: Boolean = true) {
         modifier = Modifier
             .size(24.dp)
             .scale(scale)
-            .clip(RoundedCornerShape(50))
+            .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 4.dp, bottomEnd = 14.dp, bottomStart = 4.dp))
             .background(levelColor),
         contentAlignment = Alignment.Center
     ) {

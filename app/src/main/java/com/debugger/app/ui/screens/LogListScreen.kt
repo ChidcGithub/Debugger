@@ -1,6 +1,8 @@
 package com.debugger.app.ui.screens
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -12,11 +14,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
@@ -223,6 +225,21 @@ private fun CompactLogList(
                 onLevelToggle = onLevelToggle
             )
 
+            AnimatedVisibility(
+                visible = isCapturing,
+                enter = fadeIn(animationSpec = spring(dampingRatio = 0.8f, stiffness = 200f)),
+                exit = fadeOut(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f))
+            ) {
+                androidx.compose.material3.LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+
             val motionScheme = MaterialTheme.motionScheme
             AnimatedContent(
                 targetState = logs.isEmpty(),
@@ -240,26 +257,28 @@ private fun CompactLogList(
                         state = listState,
                         contentPadding = PaddingValues(top = 4.dp, bottom = 80.dp)
                     ) {
-                        items(
+                        androidx.compose.foundation.lazy.itemsIndexed(
                             items = displayLogs,
-                            key = { item ->
+                            key = { _, item ->
                                 when (item) {
                                     is LogDisplayItem.Entry -> "e_${item.entry.id}"
                                     is LogDisplayItem.FoldedGroup -> "g_${item.representative.id}_${item.count}"
                                 }
                             }
-                        ) { item ->
+                        ) { index, item ->
                             when (item) {
                                 is LogDisplayItem.Entry -> LogItem(
                                     entry = item.entry,
                                     onClick = { onLogClick(item.entry.id) },
-                                    onLongClick = onLogLongClick
+                                    onLongClick = onLogLongClick,
+                                    index = index
                                 )
                                 is LogDisplayItem.FoldedGroup -> GroupedLogItem(
                                     entry = item.representative,
                                     count = item.count,
                                     onClick = { onLogClick(item.representative.id) },
-                                    onLongClick = onLogLongClick
+                                    onLongClick = onLogLongClick,
+                                    index = index
                                 )
                             }
                         }
@@ -341,6 +360,21 @@ private fun WideLogList(
                     onLevelToggle = onLevelToggle
                 )
 
+                AnimatedVisibility(
+                    visible = isCapturing,
+                    enter = fadeIn(animationSpec = spring(dampingRatio = 0.8f, stiffness = 200f)),
+                    exit = fadeOut(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f))
+                ) {
+                    androidx.compose.material3.LinearProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                }
+
                 if (logs.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize().padding(32.dp),
@@ -354,26 +388,28 @@ private fun WideLogList(
                         state = listState,
                         contentPadding = PaddingValues(top = 4.dp, bottom = 88.dp)
                     ) {
-                        items(
+                        androidx.compose.foundation.lazy.itemsIndexed(
                             items = displayLogs,
-                            key = { item ->
+                            key = { _, item ->
                                 when (item) {
                                     is LogDisplayItem.Entry -> "e_${item.entry.id}"
                                     is LogDisplayItem.FoldedGroup -> "g_${item.representative.id}_${item.count}"
                                 }
                             }
-                        ) { item ->
+                        ) { index, item ->
                             when (item) {
                                 is LogDisplayItem.Entry -> LogItem(
                                     entry = item.entry,
                                     onClick = { onLogClick(item.entry.id) },
-                                    onLongClick = onLogLongClick
+                                    onLongClick = onLogLongClick,
+                                    index = index
                                 )
                                 is LogDisplayItem.FoldedGroup -> GroupedLogItem(
                                     entry = item.representative,
                                     count = item.count,
                                     onClick = { onLogClick(item.representative.id) },
-                                    onLongClick = onLogLongClick
+                                    onLongClick = onLogLongClick,
+                                    index = index
                                 )
                             }
                         }

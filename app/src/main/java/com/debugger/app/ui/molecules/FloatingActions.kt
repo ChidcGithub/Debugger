@@ -2,17 +2,22 @@ package com.debugger.app.ui.molecules
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileDownload
@@ -23,13 +28,18 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 private val springSpec = spring<Float>(
@@ -73,35 +83,24 @@ fun FloatingActions(
                 targetOffsetY = { it / 2 }
             )
         ) {
-            Column(horizontalAlignment = Alignment.End) {
-                SmallFloatingActionButton(
-                    onClick = onExport,
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                FabMenuItem(
+                    label = "Export",
+                    icon = Icons.Default.FileDownload,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .semantics { contentDescription = "Export logs" }
-                ) {
-                    Icon(
-                        Icons.Default.FileDownload,
-                        contentDescription = "Export",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
-                SmallFloatingActionButton(
-                    onClick = onClear,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    onClick = onExport
+                )
+                FabMenuItem(
+                    label = "Clear",
+                    icon = Icons.Default.Delete,
                     containerColor = MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .semantics { contentDescription = "Clear all logs" }
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "Clear",
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-                Spacer(modifier = Modifier.height(12.dp))
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    onClick = onClear
+                )
             }
         }
 
@@ -123,6 +122,55 @@ fun FloatingActions(
                 contentDescription = if (isCapturing) "Stop" else "Start",
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun FabMenuItem(
+    label: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    onClick: () -> Unit
+) {
+    val cornerDp by animateDpAsState(
+        targetValue = 16.dp,
+        animationSpec = spring(dampingRatio = 0.5f, stiffness = 350f),
+        label = "fab_menu_corner"
+    )
+    val menuShape = remember(cornerDp) { RoundedCornerShape(bottomStart = cornerDp, topEnd = cornerDp) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        Surface(
+            shape = RoundedCornerShape(8.dp),
+            color = containerColor.copy(alpha = 0.9f)
+        ) {
+            Text(
+                text = label,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = contentColor
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        SmallFloatingActionButton(
+            onClick = onClick,
+            containerColor = containerColor,
+            modifier = Modifier
+                .size(48.dp)
+                .clip(menuShape)
+                .semantics { contentDescription = label }
+        ) {
+            Icon(
+                icon,
+                contentDescription = label,
+                tint = contentColor
             )
         }
     }

@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
@@ -257,7 +259,7 @@ private fun CompactLogList(
                         state = listState,
                         contentPadding = PaddingValues(top = 4.dp, bottom = 80.dp)
                     ) {
-                        androidx.compose.foundation.lazy.itemsIndexed(
+                        itemsIndexed(
                             items = displayLogs,
                             key = { _, item ->
                                 when (item) {
@@ -388,7 +390,7 @@ private fun WideLogList(
                         state = listState,
                         contentPadding = PaddingValues(top = 4.dp, bottom = 88.dp)
                     ) {
-                        androidx.compose.foundation.lazy.itemsIndexed(
+                        itemsIndexed(
                             items = displayLogs,
                             key = { _, item ->
                                 when (item) {

@@ -21,7 +21,7 @@ private val springSpec = spring<Dp>(
     stiffness = Spring.StiffnessMedium
 )
 
-private val diagonalClip = GenericShape { size, _ ->
+private val diagonalClip = GenericShape { size: androidx.compose.ui.geometry.Size ->
     moveTo(0f, 0f)
     lineTo(size.width, 0f)
     lineTo(size.width * 0.3f, size.height)

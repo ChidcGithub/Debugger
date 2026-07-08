@@ -71,7 +71,7 @@ fun GradientTopBar(
     )
 
     val cornerRadius by animateDpAsState(
-        targetValue = 28.dp * (1f - collapsedFraction),
+        targetValue = (28.dp * (1f - collapsedFraction)).coerceAtLeast(0.dp),
         animationSpec = springDpSpec,
         label = "corner_radius"
     )

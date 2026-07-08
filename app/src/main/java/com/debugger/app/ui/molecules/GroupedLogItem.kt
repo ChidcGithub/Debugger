@@ -44,6 +44,7 @@ import com.debugger.app.ui.atoms.LevelIndicator
 import com.debugger.app.ui.atoms.LogTimestamp
 import com.debugger.app.ui.theme.EmphasizedType
 import com.debugger.app.ui.theme.LogLevelColors
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -75,7 +76,7 @@ fun GroupedLogItem(
     val cardShape = remember(shapeDp) { RoundedCornerShape(topEnd = shapeDp, bottomStart = shapeDp) }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(index * 40L)
+        delay(index * 40L)
         visible = true
     }
 

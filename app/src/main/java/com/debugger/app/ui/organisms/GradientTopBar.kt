@@ -24,11 +24,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -59,7 +59,8 @@ fun GradientTopBar(
     actions: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val expandedHeight = TopAppBarDefaults.TopAppBarExpandedHeight
+    val screenHeightDp = LocalConfiguration.current.screenHeightDp
+    val expandedHeight = (screenHeightDp.dp * 0.15f).coerceIn(96.dp, 152.dp)
     val collapsedHeight = 64.dp
     val expandedTitleAlpha = 1f - collapsedFraction.coerceIn(0f, 1f)
     val collapsedTitleAlpha = collapsedFraction.coerceIn(0.5f, 1f).let { (it - 0.5f) * 2f }
